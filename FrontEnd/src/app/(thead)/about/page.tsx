@@ -37,11 +37,33 @@ const About = () => {
         <div className=" underline underline-offset-4 text-3xl hover:text-4xl hover:underline-offset-8 transition-all w-fit mx-auto">
           Contact
         </div>
-        <div className="flex align-middle my-10 space-x-5 w-screen justify-center">
-          <a href="https://github.com/BlackJack2003" className="ml-[-20px]">
+        <div className="flex align-middle my-10 space-x-10 w-screen justify-center">
+          <a
+            href="https://github.com/BlackJack2003"
+            className="ml-[-20px] transition-all duration-500 transform hover:scale-150"
+          >
             <div className="flex-col flex align-baseline">
-              <Image src="/GitHub.svg" height={120} width={120} />
+              <Image
+                src="/GitHub.svg"
+                height={120}
+                width={120}
+                alt="creator profile pic"
+              />
               <p className="text-white bold ml-[8px]">BlackJack2003</p>
+            </div>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/hemaang-sood-a72153b0"
+            className="transition-all duration-500 transform hover:scale-150"
+          >
+            <div className="flex-col flex align-baseline">
+              <Image
+                src="/linkdein.png"
+                height={120}
+                width={120}
+                alt="creator profile pic"
+              />
+              <p className="text-white bold ml-[8px]">Hemaang Sood</p>
             </div>
           </a>
         </div>
