@@ -29,8 +29,7 @@
 /FrontEnd/.env*.local
 
 # vercel
-/FrontEnd/
-.vercel
+/FrontEnd/.vercel
 
 # typescript
 *.tsbuildinfo
