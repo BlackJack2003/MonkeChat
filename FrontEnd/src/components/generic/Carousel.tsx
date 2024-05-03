@@ -43,7 +43,7 @@ const Carousel: React.FC<CarouselInterface> = ({
   return (
     <div
       style={{ ...style, maxWidth: width, maxHeight: height }}
-      className={className}
+      className={"overflow-hidden " + className}
     >
       <div className="relative">
         <div
