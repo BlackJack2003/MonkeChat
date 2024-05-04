@@ -22,18 +22,22 @@ const options:NextAuthOptions={
 					placeholder:"password"
 				}
 			},
-			async authorize(credentials)
-			{
-				const user = {id:"42",name:"hemaa",password:"test123"};
-				if(credentials?.username === user.name && credentials?.password === user.password)
-				{
-					return user;
-				}
-				else
-				{
-					return null;
-				}
-			}
+      async authorize(credentials) {
+        const response = await fetch("http://127.0.0.1:5000/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentials),
+        });
+
+        if (response.ok) {
+          const user = await response.json();
+          return user;
+        }
+
+        return null;
+      },
 		})
 	],
 	pages: {
