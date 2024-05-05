@@ -1,8 +1,23 @@
-import React from "react";
+"use client";
+import React, { useRef, useEffect } from "react";
 
 function ContactPage() {
+  const fname = useRef("");
+  const lname = useRef("");
+  const message = useRef("");
+  const email = useRef("");
+  const changeIds: string[] = ["firstname", "lastname", "email", "message"];
+  useEffect(() => {
+    changeIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.value = "";
+      }
+    });
+    return () => {};
+  }, []);
   return (
-    <section className="bg-white dark:bg-gray-900 mt-20">
+    <section className="bg-white dark:bg-gray-900 mt-20 h-screen">
       <div className="container px-6 py-12 mx-auto">
         <div>
           <p className="font-medium text-blue-500 dark:text-blue-400">
@@ -123,8 +138,11 @@ function ContactPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="John "
+                    name="firstname"
+                    id="firstname"
+                    placeholder="John"
                     className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                    onChange={(e) => (fname.current = e.target.value)}
                   />
                 </div>
 
@@ -135,7 +153,10 @@ function ContactPage() {
                   <input
                     type="text"
                     placeholder="Doe"
+                    name="lastname"
+                    id="lastname"
                     className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                    onChange={(e) => (lname.current = e.target.value)}
                   />
                 </div>
               </div>
@@ -146,8 +167,11 @@ function ContactPage() {
                 </label>
                 <input
                   type="email"
+                  id="email"
+                  name="email"
                   placeholder="johndoe@example.com"
                   className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                  onChange={(e) => (email.current = e.target.value)}
                 />
               </div>
 
@@ -158,10 +182,33 @@ function ContactPage() {
                 <textarea
                   className="block w-full h-32 px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg md:h-56 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                   placeholder="Message"
+                  id="message"
+                  name="message"
+                  onChange={(e) => (message.current = e.target.value)}
                 ></textarea>
               </div>
 
-              <button className="w-full px-6 py-3 mt-4 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+              <button
+                type="button"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  var resp = await fetch("/backEndApi/feedback/", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      fname: fname.current,
+                      lname: lname.current,
+                      message: message.current,
+                      email: email.current,
+                    }),
+                  });
+                  var rb: any = await resp.json();
+                  if (rb) alert(rb.message);
+                }}
+                className="w-full px-6 py-3 mt-4 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+              >
                 Send message
               </button>
             </form>

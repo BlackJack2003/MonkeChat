@@ -36,49 +36,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const Login_1 = __importStar(require("./schemas/Login"));
-const login_js_1 = require("./utils/login.js");
-const loginRouter = require("./routes/login/index");
-const feedBackRouter = require("./routes/Feedback/index");
-const app = (0, express_1.default)();
-const dbAddr = "mongodb://127.0.0.1:27017/monkeChatDb";
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield mongoose_1.default.connect(dbAddr);
-        console.log("Connected");
-    });
-}
-function setDefaultUsers() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const email = yield Login_1.Email.create({
-                username: "hemaangsood",
-                domain: "gmail.com",
-            });
-            // Inserting a new user with the populated email field
-            yield Login_1.default.create({
-                name: "hemaa",
-                password: (0, login_js_1.hashString)("hemustest123"), // Assuming you have a function to hash passwords
-                email: email._id, // Assign the ObjectId of the created email
-            });
-            console.log("Successfully inserted default user");
-        }
-        catch (e) {
-            console.error("Failed to insert default user or email due to:\n" + e.message);
-        }
-    });
-}
-main()
-    .then((x) => setDefaultUsers())
-    .catch((e) => {
-    console.log(e.message);
+const Login_1 = __importStar(require("../../schemas/Login"));
+const router = express_1.default.Router();
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const b = req.body;
+    var { username, password } = b;
+    console.log("trying to authenticate user:" + username);
+    var search = yield Login_1.default.findOne({ name: username });
+    if (search == null || search.password !== password) {
+        res.status(300).send(null);
+        console.log("failed to authenticate:" + username);
+        return;
+    }
+    console.log("User authenticated:" + username);
+    res.send(search);
+}));
+router.get("/", (req, res) => {
+    res.send("Wrong port u need to be at 3000");
 });
-app.use(express_1.default.json()); // for parsing application/json
-app.use(express_1.default.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.get("", (req, res) => {
-    res.send("Wrong port goto 3000");
+router.get("/getMail", (req, res) => {
+    res.send("Use post");
 });
-app.use("/login", loginRouter);
-app.use("/feedback", feedBackRouter);
-app.listen(5000);
+router.post("/getMail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var { email } = req.body;
+    var [ename, domain] = email.split("@");
+    var dbMail = yield Login_1.Email.findOne({ username: ename, domain: domain });
+    if (dbMail == null || dbMail == undefined) {
+        res.json({ isExist: false });
+        return;
+    }
+    console.log("User with email:" + email + " authenticated");
+    res.json({ isExist: true });
+    return;
+}));
+module.exports = router;

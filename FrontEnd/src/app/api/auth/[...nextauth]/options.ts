@@ -35,7 +35,7 @@ const options: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (credentials == undefined) return null;
-        const response = await fetch("http://127.0.0.1:5000/", {
+        const response = await fetch("http://127.0.0.1:5000/login/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -63,8 +63,7 @@ const options: NextAuthOptions = {
       // console.log("credentials:"+JSON.stringify(credentials));
       if (profile == undefined || profile.email == undefined) return true;
       else {
-        console.log("profile.email :" + profile.email);
-        var response = await fetch("http://127.0.0.1:5000/getMail", {
+        var response = await fetch("http://127.0.0.1:5000/login/getMail", {
           //send email in json
           method: "POST",
           headers: {

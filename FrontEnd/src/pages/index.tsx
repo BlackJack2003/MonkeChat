@@ -71,16 +71,16 @@ function LoginPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const errorMsg = useRef<string | string[]>("");
   const router = useRouter();
-
+  const resetIds = ["email", "password"];
   useEffect(() => {
-    var emailEle = document.getElementById("email");
-    try {
-      emailEle.value = "";
-    } catch (e) {}
-    var passwordEle = document.getElementById("password");
-    try {
-      passwordEle.value = "";
-    } catch (e) {}
+    resetIds.forEach((id) => {
+      try {
+        var ele = document.getElementById(id);
+        if (ele) ele.value = "";
+      } catch (e) {
+        console.error(e);
+      }
+    });
     return () => {};
   }, []);
 
