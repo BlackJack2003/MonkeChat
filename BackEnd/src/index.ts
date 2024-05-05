@@ -10,15 +10,18 @@ async function main() {
   console.log("Connected");
 }
 
-async function setDefaultUsers()
-{
-  try{
-    await User.insertMany({name:"hemaa",password:hashString("test123")});
+async function setDefaultUsers() {
+  try {
+    await User.insertMany({
+      name: "hemaa",
+      password: hashString("test123"),
+      email: {username:"hemaangsood",
+        domain:"gmail.com"
+      },
+    });
     console.log("Successfully inserted def user");
-  }
-  catch(e)
-  {
-    console.log("Failed to insert def user");
+  } catch (e: any) {
+    console.error("Failed to insert def user due to:\n" + e.message);
   }
 }
 

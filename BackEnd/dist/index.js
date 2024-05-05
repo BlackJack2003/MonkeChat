@@ -26,11 +26,17 @@ function main() {
 function setDefaultUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield User_1.default.insertMany({ name: "hemaa", password: (0, login_js_1.hashString)("test123") });
+            yield User_1.default.insertMany({
+                name: "hemaa",
+                password: (0, login_js_1.hashString)("test123"),
+                email: { username: "hemaangsood",
+                    domain: "gmail.com"
+                },
+            });
             console.log("Successfully inserted def user");
         }
         catch (e) {
-            console.log("Failed to insert def user");
+            console.error("Failed to insert def user due to:\n" + e.message);
         }
     });
 }
