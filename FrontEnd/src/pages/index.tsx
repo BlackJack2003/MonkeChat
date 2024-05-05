@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../styles/globals.css";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -71,6 +71,18 @@ function LoginPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const errorMsg = useRef<string | string[]>("");
   const router = useRouter();
+
+  useEffect(() => {
+    var emailEle = document.getElementById("email");
+    try {
+      emailEle.value = "";
+    } catch (e) {}
+    var passwordEle = document.getElementById("password");
+    try {
+      passwordEle.value = "";
+    } catch (e) {}
+    return () => {};
+  }, []);
 
   const logoSize: number = 80;
   const imUrlRef: string = 'url("/login_back_light.jpeg")';
@@ -168,12 +180,13 @@ function LoginPage({
                 <button
                   type="button"
                   className="flex w-full justify-center rounded-xl bg-stone-500 text-black dark:text-white dark:bg-slate-600  px-3 py-1.5 text-sm font-semibold leading-6  shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     signIn("credentials", {
                       username: userName.current,
                       password: pass.current,
                       redirect: true,
-                      callbackUrl: "/test",
+                      callbackUrl: "/home",
                     });
                   }}
                 >
