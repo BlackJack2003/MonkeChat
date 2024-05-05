@@ -43,7 +43,7 @@ const Header: React.FC = () => {
               </div>
               <div className="lg:absolute lg:-translate-x-1/2 lg:inset-y-5 lg:left-1/2">
                 <div className="flex-shrink-0">
-                  <a href="#" title="" className="flex">
+                  <a href="/home" title="" className="flex">
                     <Image
                       className="w-auto h-8 lg:h-10"
                       src="/favicon.svg"
