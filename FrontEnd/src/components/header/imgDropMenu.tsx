@@ -1,6 +1,22 @@
 import React, { useRef } from "react";
 import { signOut } from "next-auth/react";
 
+const ImgDropMenuItem: React.FC<{ href?: string; val: string }> = ({
+  href = "#",
+  val,
+}) => {
+  return (
+    <li>
+      <a
+        href={href}
+        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+      >
+        {val}
+      </a>
+    </li>
+  );
+};
+
 const ImgDropMenu: React.FC = () => {
   return (
     <div
@@ -11,26 +27,12 @@ const ImgDropMenu: React.FC = () => {
         className="py-2 text-sm text-gray-700 dark:text-gray-200"
         aria-labelledby="dropdownDefaultButton"
       >
-        <li>
-          <a
-            href="#"
-            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a
-            href="/settings"
-            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Settings
-          </a>
-        </li>
+        <ImgDropMenuItem href="#" val="Dashboard" />
+        <ImgDropMenuItem href="/settings" val="Settings" />
         <li>
           <div
             onClick={() => signOut()}
-            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
           >
             Sign out
           </div>
