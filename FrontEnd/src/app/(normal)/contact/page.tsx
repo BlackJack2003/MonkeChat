@@ -9,7 +9,7 @@ function ContactPage() {
   const changeIds: string[] = ["firstname", "lastname", "email", "message"];
   useEffect(() => {
     changeIds.forEach((id) => {
-      const element = document.getElementById(id);
+      const element = document.getElementById(id) as HTMLInputElement | null;
       if (element) {
         element.value = "";
       }

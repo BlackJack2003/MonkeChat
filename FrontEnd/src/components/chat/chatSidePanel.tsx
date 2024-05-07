@@ -31,8 +31,15 @@ const ChatNavSidePanel: React.FC = async () => {
   return (
     <div className="dark h-screen dark:bg-gray-900 bg-white w-fit">
       <div className="flex w-full justify-center first:ml-[2px] first:mt-2">
-        <div className="w-fit rounded-full border-2 hover:border-teal-600 active:border-teal-600 border-gray-400 overflow-hidden">
-          <img height={size} width={size} src={iSrc} alt="User Image" />
+        <div
+          className="w-fit rounded-full border-2 hover:border-teal-600 active:border-teal-600 border-gray-400 overflow-hidden"
+          style={{ height: size, width: size }}
+        >
+          <img
+            className=" w-full h-full object-fill"
+            src={iSrc}
+            alt="User Image"
+          />
         </div>
       </div>
       <div className="flex flex-col  pb-2 justify-center space-y-4 h-[82vh] w-full px-2 first:mt-auto">

@@ -39,6 +39,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const Login_1 = __importStar(require("./schemas/Login"));
 const login_js_1 = require("./utils/login.js");
+const body_parser_1 = __importDefault(require("body-parser"));
 const loginRouter = require("./routes/login/index");
 const feedBackRouter = require("./routes/Feedback/index");
 const app = (0, express_1.default)();
@@ -58,8 +59,8 @@ function setDefaultUsers() {
             });
             // Inserting a new user with the populated email field
             yield Login_1.default.create({
-                name: "hemaa",
-                password: (0, login_js_1.hashString)("hemustest123"), // Assuming you have a function to hash passwords
+                name: "hemaang",
+                password: (0, login_js_1.hashString)("test123"), // Assuming you have a function to hash passwords
                 email: email._id, // Assign the ObjectId of the created email
             });
             console.log("Successfully inserted default user");
@@ -74,8 +75,8 @@ main()
     .catch((e) => {
     console.log(e.message);
 });
-app.use(express_1.default.json()); // for parsing application/json
 app.use(express_1.default.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(body_parser_1.default.json({ limit: "20mb" })); // for parsing application/json
 app.get("", (req, res) => {
     res.send("Wrong port goto 3000");
 });

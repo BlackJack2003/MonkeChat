@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
+    "browser-image-compression": "^2.0.2",
     "crypto": "^1.0.1",
+    "image-compressor": "^2.0.3",
     "next": "14.2.2",
     "next-auth": "^4.24.7",
     "react": "^18",

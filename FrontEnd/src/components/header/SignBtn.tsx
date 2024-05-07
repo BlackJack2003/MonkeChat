@@ -57,8 +57,16 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 
   return (
     <div onClick={() => toggleDropdown()} className="mr-5" ref={dropdownRef}>
-      <div className="rounded-full border-2 hover:border-teal-600 active:border-teal-600 border-gray-400 overflow-hidden">
-        <img height={size} width={size} src={iSrc} alt="User Image" />
+      <div
+        className="rounded-full border-2 hover:border-teal-600 active:border-teal-600 border-gray-400 overflow-hidden"
+        style={{ height: size, width: size }}
+      >
+        <img
+          src={iSrc}
+          alt="User Image"
+          style={{ objectFit: "fill" }}
+          className="w-full h-full"
+        />
       </div>
       {isOpen && <ImgDropMenu></ImgDropMenu>}
     </div>

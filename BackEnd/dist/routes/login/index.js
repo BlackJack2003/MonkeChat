@@ -39,17 +39,36 @@ const express_1 = __importDefault(require("express"));
 const Login_1 = __importStar(require("../../schemas/Login"));
 const router = express_1.default.Router();
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const b = req.body;
-    var { username, password } = b;
-    console.log("trying to authenticate user:" + username);
-    var search = yield Login_1.default.findOne({ name: username });
-    if (search == null || search.password !== password) {
-        res.status(300).send(null);
-        console.log("failed to authenticate:" + username);
+    try {
+        const b = req.body;
+        var { username, password } = b;
+        username = username || "";
+        password = password || "";
+        var search = null;
+        console.log("trying to authenticate user:" + username);
+        if (username.includes("@") && username.includes(".")) {
+            const [a, b] = username.split("@");
+            var email = yield Login_1.Email.findOne({ username: a, domain: b });
+            if (email != null) {
+                search = yield Login_1.default.findOne({ email: email._id });
+            }
+        }
+        else {
+            console.log("Looking for username:" + username);
+            search = yield Login_1.default.findOne({ name: username });
+        }
+        if (search == null || search.password !== password) {
+            res.status(300).send(null);
+            console.log("failed to authenticate:" + username);
+            return;
+        }
+        console.log("User with cred authenticated:" + username);
+        res.send(search);
+    }
+    catch (e) {
+        res.status(500).send(null);
         return;
     }
-    console.log("User authenticated:" + username);
-    res.send(search);
 }));
 router.get("/", (req, res) => {
     res.send("Wrong port u need to be at 3000");
@@ -58,15 +77,77 @@ router.get("/getMail", (req, res) => {
     res.send("Use post");
 });
 router.post("/getMail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var { email } = req.body;
-    var [ename, domain] = email.split("@");
-    var dbMail = yield Login_1.Email.findOne({ username: ename, domain: domain });
-    if (dbMail == null || dbMail == undefined) {
+    try {
+        var { email } = req.body;
+        var [ename, domain] = email.split("@");
+        var dbMail = yield Login_1.Email.findOne({ username: ename, domain: domain });
+        if (dbMail == null || dbMail == undefined) {
+            console.log("User with email:" + email + " failed to authenticated");
+            res.json({ isExist: false });
+            return;
+        }
+        console.log("User with email:" + email + " authenticated");
+        res.json({ isExist: true });
+        return;
+    }
+    catch (e) {
+        console.error(e.message);
         res.json({ isExist: false });
         return;
     }
-    console.log("User with email:" + email + " authenticated");
-    res.json({ isExist: true });
-    return;
+}));
+router.post("/signUp", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const b = req.body;
+        var { username, password, img, email } = b;
+        var [ename, domain] = email.split("@");
+        var dbMail = yield Login_1.Email.findOne({ username: ename, domain: domain });
+        if (dbMail != null) {
+            res.status(406).send("Email Exists");
+            console.log("Email exists!!");
+            return;
+        }
+        var dbUname = yield Login_1.default.findOne({ name: username });
+        if (dbUname != null) {
+            res.status(406).send("Username Exists");
+            return;
+        }
+        let emailInsert;
+        try {
+            emailInsert = yield Login_1.Email.create({
+                username: ename,
+                domain: domain,
+            });
+        }
+        catch (e) {
+            console.error("Email cannot be created due to:" + e.message);
+            res.status(500).send("Email creation failed");
+            return;
+        }
+        let user;
+        try {
+            user = yield Login_1.default.create({
+                name: username,
+                password: password,
+                image: img,
+                email: emailInsert._id,
+            });
+            res.send("User:" + username + "+ created");
+        }
+        catch (e) {
+            try {
+                yield Login_1.Email.deleteOne({ username: ename, domain: domain });
+            }
+            catch (cleanupError) {
+                console.error("Error cleaning up email:", cleanupError.message);
+            }
+            console.error("User cannot be created due to:" + e.message);
+            return res.status(500).send("Internal server error (user creation)");
+        }
+    }
+    catch (e) {
+        console.error(e.message);
+        res.status(500).send("Internal Error 123");
+    }
 }));
 module.exports = router;

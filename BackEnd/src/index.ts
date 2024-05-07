@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User, { Email } from "./schemas/Login";
 import { hashString } from "./utils/login.js";
+import bodyParser from "body-parser";
 
 const loginRouter = require("./routes/login/index");
 const feedBackRouter = require("./routes/Feedback/index");
@@ -24,8 +25,8 @@ async function setDefaultUsers() {
 
     // Inserting a new user with the populated email field
     await User.create({
-      name: "hemaa",
-      password: hashString("hemustest123"), // Assuming you have a function to hash passwords
+      name: "hemaang",
+      password: hashString("test123"), // Assuming you have a function to hash passwords
       email: email._id, // Assign the ObjectId of the created email
     });
 
@@ -43,8 +44,8 @@ main()
     console.log(e.message);
   });
 
-app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json({ limit: "20mb" })); // for parsing application/json
 
 app.get("", (req, res) => {
   res.send("Wrong port goto 3000");

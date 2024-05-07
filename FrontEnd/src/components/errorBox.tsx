@@ -8,7 +8,7 @@ const ErrorBox: React.FC<ErrorProps> = ({ errVal }) => {
   if (errVal == "") return <></>;
   return (
     <div
-      className="w-full rounded-xl mx-4 bg-blue-100 border-t border-b border-red-500 text-red-700 px-4 py-3"
+      className="w-full rounded-xl  bg-blue-100 border-t border-b border-red-500 text-red-700 px-4 py-3"
       role="alert"
     >
       <p className="font-bold">Error</p>

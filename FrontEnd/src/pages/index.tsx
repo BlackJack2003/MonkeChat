@@ -11,6 +11,7 @@ import { getProviders, signIn } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
 import options from "../app/api/auth/[...nextauth]/options";
 import ErrorBox from "@/components/errorBox";
+import { hashString } from "@/utils/genral/genral";
 
 function ProviderList({
   providers,
@@ -75,7 +76,7 @@ function LoginPage({
   useEffect(() => {
     resetIds.forEach((id) => {
       try {
-        var ele = document.getElementById(id);
+        var ele = document.getElementById(id) as HTMLInputElement | null;
         if (ele) ele.value = "";
       } catch (e) {
         console.error(e);
@@ -134,7 +135,7 @@ function LoginPage({
                   className="block text-sm font-medium leading-6 text-sky-100"
                 >
                   {" "}
-                  Email address{" "}
+                  Email address/Username{" "}
                 </label>{" "}
                 <div className="mt-2">
                   {" "}
@@ -184,7 +185,7 @@ function LoginPage({
                     e.preventDefault();
                     signIn("credentials", {
                       username: userName.current,
-                      password: pass.current,
+                      password: hashString(pass.current),
                       redirect: true,
                       callbackUrl: "/home",
                     });
@@ -195,6 +196,12 @@ function LoginPage({
                 </button>{" "}
               </div>{" "}
             </form>{" "}
+            <div className="text-center text-sky-100 mt-2">
+              Dont have an account?&nbsp;
+              <a href="/signup" className=" text-sky-500">
+                Sign up!!&nbsp;
+              </a>
+            </div>
             <div className="h-5"></div>
             <ProviderList providers={providers} />{" "}
           </div>{" "}
