@@ -37,7 +37,7 @@ const options: NextAuthOptions = {
 
         if (response.ok) {
           const user = await response.json();
-          return user;
+          return { ...user };
         }
 
         return null;
@@ -64,6 +64,9 @@ const options: NextAuthOptions = {
         return isExist;
       }
     },
+    // async jwt({ token, user }) {
+    //   return { ...token, hashedPass: user.hashedPass };
+    // },
   },
 };
 
