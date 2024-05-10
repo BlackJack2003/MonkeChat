@@ -9,7 +9,6 @@ router.get("/", (req, res) => {
 
 router.post("", async (req, res) => {
   const b = req.body;
-  console.log(b);
   try {
     const [u, d] = b.email.split("@");
 

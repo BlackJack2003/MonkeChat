@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import User, { Email } from "./schemas/Login";
-import { hashString } from "./utils/login.js";
+import { hashString, generateKeyPair } from "./utils/login.js";
 import bodyParser from "body-parser";
 
 const loginRouter = require("./routes/login/index");
@@ -23,12 +23,14 @@ async function setDefaultUsers() {
       username: "hemaangsood",
       domain: "gmail.com",
     });
-
+    const { publicKey, privateKey } = await generateKeyPair();
     // Inserting a new user with the populated email field
     await User.create({
       name: "hemaang",
       password: hashString("test123"), // Assuming you have a function to hash passwords
-      email: email._id, // Assign the ObjectId of the created email
+      email: email._id, // Assign the ObjectId of the created email,
+      public_key: publicKey,
+      private_key: privateKey,
     });
 
     console.log("Successfully inserted default user");

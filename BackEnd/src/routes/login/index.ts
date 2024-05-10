@@ -1,5 +1,6 @@
 import express from "express";
 import User, { Email } from "../../schemas/Login";
+import { generateKeyPair } from "../../utils/login";
 
 const router = express.Router();
 
@@ -31,6 +32,8 @@ router.post("/", async (req, res) => {
       name: search.name,
       email: search.email.username + "@" + search.email.domain,
       image: search.image,
+      public_key: search.public_key,
+      private_key: search.private_key,
     };
     res.send(toSend);
   } catch (e: any) {
@@ -91,12 +94,15 @@ router.post("/signUp", async (req, res) => {
       return;
     }
     let user;
+    const { publicKey, privateKey } = await generateKeyPair();
     try {
       user = await User.create({
         name: username,
         password: password,
         image: img,
         email: emailInsert._id,
+        public_key: publicKey,
+        private_key: privateKey,
       });
       res.send("User:" + username + "+ created");
     } catch (e: any) {
@@ -111,6 +117,41 @@ router.post("/signUp", async (req, res) => {
   } catch (e: any) {
     console.error(e.message);
     res.status(500).send("Internal Error 123");
+  }
+});
+
+//login/oauthLogin
+router.post("/oauthLogin", async (req, res) => {
+  try {
+    const b = req.body;
+    console.log(b);
+    var { serverPassword, email } = b;
+    if (serverPassword != process.env.BACKEND_KEY) {
+      console.error("Env keys not matching check key or prepare for attack");
+      res.status(400).send("Nope password");
+      return;
+    }
+    const [username, domain] = email.split("@");
+    var email = await email.findOne({ username: username, domain: domain });
+    if (email == null || email == undefined) {
+      console.log("User with email " + username + "@" + domain + " not found");
+      res.status(400).send("Nope email");
+      return;
+    }
+    const user = await User.findOne({ email: email._id });
+    if (user == null || user == undefined) {
+      console.log("User with email " + email + " not found but email found");
+      res.status(400).send("Nope user");
+      return;
+    }
+    res.json({
+      name: user.name,
+      email: email,
+      image: user.image,
+    });
+    return;
+  } catch (e: any) {
+    console.error(e.message);
   }
 });
 

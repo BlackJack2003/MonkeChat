@@ -29,10 +29,7 @@ const options: NextAuthOptions = {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            ...credentials,
-            password: credentials?.password,
-          }),
+          body: JSON.stringify(credentials),
         });
 
         if (response.ok) {
@@ -62,6 +59,9 @@ const options: NextAuthOptions = {
         var isExist = response.json().then((x) => x.isExist) || false;
         return isExist;
       }
+    },
+    async session({ session }) {
+      return session;
     },
   },
 };

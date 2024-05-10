@@ -38,3 +38,4 @@ BackEnd/node_modules/*
 
 #compiled
 BackEnd/dist
+BackEnd/.env.local

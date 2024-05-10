@@ -59,6 +59,7 @@ const DelMenu: React.FC<{ username: string }> = ({ username }) => {
 
 const AccountSection: React.FC = () => {
   const { data } = useSession();
+  console.log("Data:" + JSON.stringify(data));
   const {
     name = undefined,
     email = undefined,
