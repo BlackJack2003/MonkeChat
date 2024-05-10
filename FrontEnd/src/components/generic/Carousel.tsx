@@ -29,7 +29,6 @@ const Carousel: React.FC<CarouselInterface> = ({
         behavior: "instant",
       });
       if (x == scrollableRef.current?.scrollLeft) {
-        console.log("scrollingback");
         scrollableRef.current?.scrollTo(0, 0);
       }
       x = scrollableRef.current?.scrollLeft;

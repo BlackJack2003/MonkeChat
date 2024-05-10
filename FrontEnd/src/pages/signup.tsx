@@ -124,18 +124,12 @@ export const Signup: React.FC<any> = ({
                 alert("File is too big!");
                 return;
               }
-              alert(`originalFile size ${file.size / 1024 / 1024} MB`);
               try {
                 imageCompression(file, {
                   maxSizeMB: 0.0098,
                   maxWidthOrHeight: 400,
                   useWebWorker: true,
                 }).then((compressedFile) => {
-                  alert(
-                    `compressedFile size ${
-                      compressedFile.size / 1024 / 1024
-                    } MB`
-                  );
                   file = compressedFile;
 
                   // Check if a file is selected

@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import ImgDropMenu from "./imgDropMenu";
+import { redirect } from "next/dist/server/api-utils";
 
 interface SignBtnInterface {
   val: string;

@@ -26,7 +26,7 @@ const ChatNavSmallComponent: React.FC<{ imgSrc: string; href: string }> = ({
 const ChatNavSidePanel: React.FC = async () => {
   const session: Session = await getServerSession(options).then((x) => x);
 
-  const iSrc = session.user?.image as string;
+  const iSrc = (session.user?.image as string) || "/def_user.jpg";
   const size = 50;
   return (
     <div className="dark h-screen dark:bg-gray-900 bg-white w-fit">
@@ -36,7 +36,7 @@ const ChatNavSidePanel: React.FC = async () => {
           style={{ height: size, width: size }}
         >
           <img
-            className=" w-full h-full object-fill"
+            className="w-full h-full object-fill"
             src={iSrc}
             alt="User Image"
           />

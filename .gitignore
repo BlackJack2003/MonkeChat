@@ -37,4 +37,4 @@ next-env.d.ts
 BackEnd/node_modules/*
 
 #compiled
-BackEnd/dist/
+BackEnd/dist

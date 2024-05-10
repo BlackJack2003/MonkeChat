@@ -42,6 +42,7 @@ const login_js_1 = require("./utils/login.js");
 const body_parser_1 = __importDefault(require("body-parser"));
 const loginRouter = require("./routes/login/index");
 const feedBackRouter = require("./routes/Feedback/index");
+const settingsRouter = require("./routes/settings/index");
 const app = (0, express_1.default)();
 const dbAddr = "mongodb://127.0.0.1:27017/monkeChatDb";
 function main() {
@@ -82,4 +83,5 @@ app.get("", (req, res) => {
 });
 app.use("/login", loginRouter);
 app.use("/feedback", feedBackRouter);
+app.use("/settings", settingsRouter);
 app.listen(5000);

@@ -50,12 +50,12 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const [a, b] = username.split("@");
             var email = yield Login_1.Email.findOne({ username: a, domain: b });
             if (email != null) {
-                search = yield Login_1.default.findOne({ email: email._id });
+                search = yield Login_1.default.findOne({ email: email._id }).populate("email");
             }
         }
         else {
             console.log("Looking for username:" + username);
-            search = yield Login_1.default.findOne({ name: username });
+            search = yield Login_1.default.findOne({ name: username }).populate("email");
         }
         if (search == null || search.password !== password) {
             res.status(300).send(null);
@@ -63,18 +63,20 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         console.log("User with cred authenticated:" + username);
-        res.send(search);
+        var toSend = {
+            name: search.name,
+            email: search.email.username + "@" + search.email.domain,
+            image: search.image,
+        };
+        res.send(toSend);
     }
     catch (e) {
         res.status(500).send(null);
         return;
     }
 }));
-router.get("/", (req, res) => {
+router.get("/*", (req, res) => {
     res.send("Wrong port u need to be at 3000");
-});
-router.get("/getMail", (req, res) => {
-    res.send("Use post");
 });
 router.post("/getMail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

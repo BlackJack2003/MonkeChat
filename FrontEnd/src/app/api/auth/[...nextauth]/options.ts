@@ -37,7 +37,7 @@ const options: NextAuthOptions = {
 
         if (response.ok) {
           const user = await response.json();
-          return { ...user };
+          return user;
         }
 
         return null;
@@ -49,7 +49,6 @@ const options: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      // console.log("credentials:"+JSON.stringify(credentials));
       if (profile == undefined || profile.email == undefined) return true;
       else {
         var response = await fetch("http://127.0.0.1:5000/login/getMail", {
@@ -64,9 +63,6 @@ const options: NextAuthOptions = {
         return isExist;
       }
     },
-    // async jwt({ token, user }) {
-    //   return { ...token, hashedPass: user.hashedPass };
-    // },
   },
 };
 
