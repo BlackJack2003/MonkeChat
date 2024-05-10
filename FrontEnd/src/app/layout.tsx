@@ -14,7 +14,7 @@ const RootLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         <body className="w-screen">
           <div
             id="myRoot"
-            className="min-h-screen bg-myBg pb-2 text-black dark:text-white"
+            className="min-h-screen bg-myBg pb-2 text-black dark:text-white min-w-screen"
           >
             {children}
           </div>
