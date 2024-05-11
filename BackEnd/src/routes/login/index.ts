@@ -27,17 +27,15 @@ router.post("/", async (req, res) => {
       console.log("failed to authenticate:" + username);
       return;
     }
-    console.log("User with cred authenticated:" + username);
     var toSend = {
       name: search.name,
       email: search.email.username + "@" + search.email.domain,
-      image: search.image,
-      public_key: search.public_key,
-      private_key: search.private_key,
     };
     res.send(toSend);
+    console.log("User with cred authenticated:" + username);
   } catch (e: any) {
-    res.status(500).send(null);
+    console.error(e.message);
+    res.status(500).send("Error auth");
     return;
   }
 });
@@ -121,37 +119,45 @@ router.post("/signUp", async (req, res) => {
 });
 
 //login/oauthLogin
-router.post("/oauthLogin", async (req, res) => {
+router.post("/sessionUserData", async (req, res) => {
   try {
     const b = req.body;
-    console.log(b);
     var { serverPassword, email } = b;
+    console.log("Getting session for email:" + email);
     if (serverPassword != process.env.BACKEND_KEY) {
-      console.error("Env keys not matching check key or prepare for attack");
+      console.error(
+        "Env keys not matching check key or prepare for attack\nWanted:" +
+          process.env.BACKEND_KEY +
+          "\nGot:" +
+          serverPassword
+      );
       res.status(400).send("Nope password");
       return;
     }
     const [username, domain] = email.split("@");
-    var email = await email.findOne({ username: username, domain: domain });
+    var email = await Email.findOne({ username: username, domain: domain });
     if (email == null || email == undefined) {
       console.log("User with email " + username + "@" + domain + " not found");
       res.status(400).send("Nope email");
       return;
     }
-    const user = await User.findOne({ email: email._id });
-    if (user == null || user == undefined) {
+    const search = await User.findOne({ email: email._id });
+    if (search == null || search == undefined) {
       console.log("User with email " + email + " not found but email found");
       res.status(400).send("Nope user");
       return;
     }
     res.json({
-      name: user.name,
-      email: email,
-      image: user.image,
+      name: search.name,
+      email: search.email.username + "@" + search.email.domain,
+      image: search.image,
+      public_key: search.public_key,
+      private_key: search.private_key,
     });
     return;
   } catch (e: any) {
     console.error(e.message);
+    res.status(500).send("Error getting user sesion");
   }
 });
 

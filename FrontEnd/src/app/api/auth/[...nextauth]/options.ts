@@ -34,10 +34,13 @@ const options: NextAuthOptions = {
 
         if (response.ok) {
           const user = await response.json();
+          console.log("User:", user.name);
           return user;
+        } else {
+          const val = await response.text();
+          console.error("Got val:", val);
+          return null;
         }
-
-        return null;
       },
     }),
   ],
@@ -61,9 +64,34 @@ const options: NextAuthOptions = {
       }
     },
     async session({ session }) {
-      return session;
+      try {
+        var resp = await fetch("http://127.0.0.1:5000/login/sessionUserData", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            serverPassword: process.env.BACKEND_KEY,
+            email: session.user?.email,
+          }),
+        });
+        var user: mySessionUser = await resp.json();
+        session.user = user;
+        return session;
+      } catch (e: any) {
+        console.error(e.message);
+        return session;
+      }
     },
   },
 };
 
 export default options;
+
+interface mySessionUser {
+  name: string;
+  email: string;
+  image?: string;
+  public_key?: string;
+  private_key?: string;
+}

@@ -76,6 +76,10 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 
 const SignInOrLogo: React.FC = () => {
   const { status, data } = useSession();
+  if (data?.user.public_key != undefined) console.log(data?.user.public_key);
+  else {
+    console.log("No public key");
+  }
   const {
     name = undefined,
     email = undefined,

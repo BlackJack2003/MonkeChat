@@ -33,14 +33,14 @@ export function generateKeyPair(): Promise<{
         if (err) {
           reject(err);
         } else {
-          function remweirdStartAndEndBits(x: string): string {
-            var l = x.split("\n");
-            l.pop();
-            l = l.slice(1, l.length - 1);
-            return l.join("");
-          }
-          publicKey = remweirdStartAndEndBits(publicKey);
-          privateKey = remweirdStartAndEndBits(privateKey);
+          //   function remweirdStartAndEndBits(x: string): string {
+          //     var l = x.split("\n");
+          //     l.pop();
+          //     l = l.slice(1, l.length - 1);
+          //     return l.join("");
+          //   }
+          //   publicKey = remweirdStartAndEndBits(publicKey);
+          //   privateKey = remweirdStartAndEndBits(privateKey);
           resolve({ publicKey, privateKey });
         }
       }
