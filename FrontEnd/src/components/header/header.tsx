@@ -1,9 +1,10 @@
-"use client";
-import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import SignInOrLogo from "./SignBtn";
 import { SessionProvider } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
 import SidePanelButton from "./sidePanel";
+import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import { Session } from "next-auth";
 
 const HeaderLeftItems: React.FC<{ text: string; func: Function }> = ({
   text,
@@ -20,10 +21,21 @@ const HeaderLeftItems: React.FC<{ text: string; func: Function }> = ({
   );
 };
 
-const Header: React.FC = () => {
+export const getServerSideProps = async () => {
+  var session = getServerSession();
+  return { session };
+};
+
+const Header: React.FC<{ session: Session }> = ({ session }) => {
   return (
     <header id="headerThing" className="fixed top-0 max-w-fit z-20 ">
-      <SessionProvider>
+      <SessionProvider
+        session={session}
+        //x*60 secs
+        refetchInterval={5 * 60}
+        // Re-fetches session when window is focused
+        refetchOnWindowFocus={false}
+      >
         <div
           id="myHeaderbgp"
           className="w-screen border-b-[1px] border-slate-400 text-black dark:text-white  bg-gray-100 dark:bg-gray-900 "

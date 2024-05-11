@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { Source_Sans_3 } from "next/font/google";
 import AccountSection from "./userSetting/account";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 
 const NoneMenu: React.FC = () => {
   return <></>;

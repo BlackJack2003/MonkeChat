@@ -21,7 +21,8 @@ import {
   getPanel,
   sendMessage,
 } from "../../../utils/chat/utils";
-import { useSession, SessionProvider } from "next-auth/react";
+import { useSession, SessionProvider, getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 const ChatPanelContext = createContext<{
   panel: ChatPanelInterface;
@@ -273,10 +274,21 @@ const Chat: React.FC = () => {
   const [panel, setPanel] = useState<ChatPanelInterface>({
     userName: "kim-il-sung",
   });
-
+  var session = useRef<Session | null>(null);
+  useEffect(() => {
+    let _ = async () => {
+      session.current = await getSession();
+    };
+    _();
+    return () => {};
+  }, []);
   return (
     <ChatPanelContext.Provider value={{ panel, setPanel }}>
-      <SessionProvider>
+      <SessionProvider
+        session={session.current}
+        refetchInterval={5 * 60}
+        refetchOnWindowFocus={false}
+      >
         <ChatMenu />
         <ChatPanel {...panel}>
           {/* <MessageBox text="Hello" />

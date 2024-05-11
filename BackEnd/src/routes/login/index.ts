@@ -3,6 +3,7 @@ import User, { Email } from "../../schemas/Login";
 import { generateKeyPair } from "../../utils/login";
 
 const router = express.Router();
+var no_of_session_call = 0;
 
 router.post("/", async (req, res) => {
   try {
@@ -123,7 +124,12 @@ router.post("/sessionUserData", async (req, res) => {
   try {
     const b = req.body;
     var { serverPassword, email } = b;
-    console.log("Getting session for email:" + email);
+    console.log(
+      "Getting session for email:" +
+        email +
+        "\nNo of session call:" +
+        ++no_of_session_call
+    );
     if (serverPassword != process.env.BACKEND_KEY) {
       console.error(
         "Env keys not matching check key or prepare for attack\nWanted:" +

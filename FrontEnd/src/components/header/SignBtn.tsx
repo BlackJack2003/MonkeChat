@@ -1,9 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
 import ImgDropMenu from "./imgDropMenu";
-import { redirect } from "next/dist/server/api-utils";
 
 interface SignBtnInterface {
   val: string;
@@ -76,10 +74,6 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 
 const SignInOrLogo: React.FC = () => {
   const { status, data } = useSession();
-  if (data?.user.public_key != undefined) console.log(data?.user.public_key);
-  else {
-    console.log("No public key");
-  }
   const {
     name = undefined,
     email = undefined,

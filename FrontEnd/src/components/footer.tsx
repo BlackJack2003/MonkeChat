@@ -1,4 +1,4 @@
-import React, { ReactChild, ReactChildren, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
