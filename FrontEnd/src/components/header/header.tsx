@@ -1,10 +1,10 @@
+"use client";
 import Image from "next/image";
 import SignInOrLogo from "./SignBtn";
-import { SessionProvider } from "next-auth/react";
-import { getServerSession } from "next-auth/next";
+import { SessionProvider, getSession } from "next-auth/react";
 import SidePanelButton from "./sidePanel";
-import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { Session } from "next-auth";
+import { useRef, useEffect } from "react";
 
 const HeaderLeftItems: React.FC<{ text: string; func: Function }> = ({
   text,
@@ -21,16 +21,19 @@ const HeaderLeftItems: React.FC<{ text: string; func: Function }> = ({
   );
 };
 
-export const getServerSideProps = async () => {
-  var session = getServerSession();
-  return { session };
-};
-
-const Header: React.FC<{ session: Session }> = ({ session }) => {
+const Header: React.FC = () => {
+  var session = useRef<Session | null>(null);
+  useEffect(() => {
+    let _ = async () => {
+      session.current = await getSession();
+    };
+    _();
+    return () => {};
+  }, []);
   return (
     <header id="headerThing" className="fixed top-0 max-w-fit z-20 ">
       <SessionProvider
-        session={session}
+        session={session.current}
         //x*60 secs
         refetchInterval={5 * 60}
         // Re-fetches session when window is focused

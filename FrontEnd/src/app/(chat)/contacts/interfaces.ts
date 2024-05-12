@@ -1,5 +1,4 @@
-export interface ContactInterface
-{
-	userName?:string,
-	img?:string 
+export interface ContactInterface {
+  userName?: string;
+  img?: string;
 }

@@ -1,11 +1,5 @@
 "use client";
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  createContext,
-  useContext,
-} from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { Source_Sans_3 } from "next/font/google";
 import AccountSection from "./userSetting/account";
 import { SessionProvider } from "next-auth/react";

@@ -7,10 +7,11 @@ import React, {
   useContext,
   createContext,
 } from "react";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider, getSession, useSession } from "next-auth/react";
 import { ContactInterface } from "./interfaces";
 import Image from "next/image";
 import { getContacts, getPanel } from "@/utils/contact/utils";
+import { Session } from "next-auth";
 
 const ContactPanelContext = createContext<{
   panel: ContactInterface;
@@ -46,7 +47,7 @@ const ContactMenuItem: React.FC<ContactInterface> = ({
         alt={userName || ""}
         height={imgSize}
         width={imgSize}
-        className="rounded-full ml-2 ring-2 ring-slate-700 h-fit w-fit my-auto"
+        className="rounded-full ml-2 ring-2 ring-slate-700 my-auto"
       />
       <div className="flex flex-col ml-2">
         <div className="text-2xl">
@@ -60,6 +61,19 @@ const ContactMenuItem: React.FC<ContactInterface> = ({
 const ContactSidePanel: React.FC = () => {
   const searchVal = useRef<string>("");
   const { data } = useSession();
+  const [update, setupdate] = useState(false);
+  const contactsList = useRef<ContactInterface[]>([]);
+  useEffect(() => {
+    const _ = async () => {
+      if (data != null) {
+        contactsList.current = await getContacts(data);
+        setupdate(!update);
+        console.log(contactsList.current);
+      }
+    };
+    _();
+    return () => {};
+  }, [data]);
   if (data == null) return <></>;
   return (
     <div
@@ -78,7 +92,7 @@ const ContactSidePanel: React.FC = () => {
         }}
       />
 
-      {getContacts(data).map((item, index) => {
+      {contactsList.current.map((item, index) => {
         return <ContactMenuItem key={index} {...item} />;
       })}
     </div>
@@ -104,6 +118,15 @@ const ContactPanel: React.FC = () => {
 
 const Contacts: React.FC = () => {
   const [panel, setpanel] = useState<ContactInterface>({});
+  var session = useRef<Session | null>(null);
+  useEffect(() => {
+    let _ = async () => {
+      session.current = await getSession();
+    };
+    _();
+    return () => {};
+  }, []);
+
   return (
     <ContactPanelContext.Provider
       value={{
@@ -111,7 +134,11 @@ const Contacts: React.FC = () => {
         setPanel: setpanel,
       }}
     >
-      <SessionProvider>
+      <SessionProvider
+        session={session.current}
+        refetchInterval={5 * 60}
+        refetchOnWindowFocus={false}
+      >
         <ContactSidePanel />
         <ContactPanel />
       </SessionProvider>

@@ -1,4 +1,4 @@
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, User } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -75,7 +75,7 @@ const options: NextAuthOptions = {
             email: session.user?.email,
           }),
         });
-        var user: mySessionUser = await resp.json();
+        var user: User = await resp.json();
         session.user = user;
         return session;
       } catch (e: any) {
@@ -88,10 +88,10 @@ const options: NextAuthOptions = {
 
 export default options;
 
-interface mySessionUser {
-  name: string;
-  email: string;
-  image?: string;
-  public_key?: string;
-  private_key?: string;
-}
+// interface mySessionUser {
+//   name: string;
+//   email: string;
+//   image?: string;
+//   public_key?: string;
+//   private_key?: string;
+// }
