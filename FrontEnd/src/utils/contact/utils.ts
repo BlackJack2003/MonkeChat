@@ -42,3 +42,25 @@ export const getContacts = async (
     }
   }
 };
+
+export const addContact: (
+  session: Session,
+  nuname: string
+) => Promise<boolean> = async (session: Session | null, nuname: string) => {
+  if (session?.user == undefined) return false;
+  if (session == null) return false;
+  const data = session.user;
+  var { name, private_key } = data;
+  var resp = await fetch("/backEndApi/contacts/getContacts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: name,
+      private_key: private_key,
+      user_to_add: nuname,
+    }),
+  });
+  return resp.ok;
+};

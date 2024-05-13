@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
   public_key: { type: "string", required: true },
   private_key: { type: "string", required: true },
   contacts: [{ type: mongoose.Types.ObjectId, ref: "user" }],
+  chats: [{ type: mongoose.Types.ObjectId, ref: "chat" }],
 });
 
 const User = mongoose.models.user || mongoose.model("user", userSchema);

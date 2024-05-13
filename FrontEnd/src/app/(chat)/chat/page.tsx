@@ -286,7 +286,7 @@ const Chat: React.FC = () => {
     <ChatPanelContext.Provider value={{ panel, setPanel }}>
       <SessionProvider
         session={session.current}
-        refetchInterval={5 * 60}
+        refetchInterval={10 * 60}
         refetchOnWindowFocus={false}
       >
         <ChatMenu />

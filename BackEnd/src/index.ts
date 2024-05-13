@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import User, { Email } from "./schemas/Login";
+import User, { Email } from "./schemas/User";
 import { hashString, generateKeyPair } from "./utils/login.js";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";

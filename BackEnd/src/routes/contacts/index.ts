@@ -1,11 +1,7 @@
 import express from "express";
 const router = express.Router();
-import User from "../../schemas/Login";
-
-interface contactInterface {
-  userName: string;
-  img?: string;
-}
+import mongoose from "mongoose";
+import User from "../../schemas/User";
 
 router.post("/getContacts", async (req, res) => {
   try {
@@ -43,6 +39,39 @@ router.post("/getContacts", async (req, res) => {
   } catch (e: any) {
     res.status(500).send("Nope");
     console.error(e.message);
+    return;
+  }
+});
+
+router.post("/addContact", async (req, res) => {
+  try {
+    const b = req.body;
+    const { name, private_key, user_to_add } = b;
+    var user = await User.findOne({ name: name });
+
+    if (user == null || user == undefined) {
+      res.status(500).send("Nope");
+      console.log("User:" + name + " not found");
+      return;
+    }
+    if (private_key != user.private_key) {
+      res.status(500).send("Nope password no match");
+      console.log("password no match");
+      return;
+    }
+    const a_user = await User.findOne({ name: user_to_add });
+    if (a_user == null || a_user == undefined) {
+      res.status(500).send("Nope");
+      console.log("User:" + name + " not found");
+      return;
+    }
+    user.contacts.push(a_user._id);
+    await user.save();
+    res.send("Done");
+    return;
+  } catch (error: any) {
+    console.error(error.message);
+    res.status(500).send("An error occurred while adding contact");
     return;
   }
 });

@@ -35,7 +35,7 @@ const Header: React.FC = () => {
       <SessionProvider
         session={session.current}
         //x*60 secs
-        refetchInterval={5 * 60}
+        refetchInterval={10 * 60}
         // Re-fetches session when window is focused
         refetchOnWindowFocus={false}
       >

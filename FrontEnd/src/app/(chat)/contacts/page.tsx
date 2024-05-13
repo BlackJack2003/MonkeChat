@@ -10,7 +10,7 @@ import React, {
 import { SessionProvider, getSession, useSession } from "next-auth/react";
 import { ContactInterface } from "./interfaces";
 import Image from "next/image";
-import { getContacts, getPanel } from "@/utils/contact/utils";
+import { getContacts, getPanel, addContact } from "@/utils/contact/utils";
 import { Session } from "next-auth";
 
 const ContactPanelContext = createContext<{
@@ -22,6 +22,50 @@ const ContactPanelContext = createContext<{
 });
 
 const GetContactContext = () => useContext(ContactPanelContext);
+
+const PanelAddContactSection: React.FC = () => {
+  const [isOpen, setisOpen] = useState(false);
+  const addUsername = useRef("");
+  const { data } = useSession();
+  return (
+    <div className="h-fit flex mt-auto w-full flex-row">
+      <div
+        className="flex my-auto  flex-grow px-1 transition-all overflow-hidden"
+        style={{
+          maxWidth: isOpen ? "100%" : "0",
+          height: isOpen ? "max-content" : "0",
+        }}
+      >
+        <input
+          type="text"
+          placeholder="User to Add"
+          className="h-10 rounded-md w-full hover:ring-2 active:ring-4 ring-teal-300 dark:bg-gray-700 border-b-teal-700"
+          onChange={(e) => {
+            var ele = e.target as HTMLInputElement;
+            if (ele) addUsername.current = ele.value;
+          }}
+        />
+        <div
+          className="bg-green-600 hover:bg-green-400 ml-[-45px] h-6 my-auto rounded-md pb-1 px-1 "
+          onClick={async (e) => {
+            if (data) {
+              var resp = await addContact(data, addUsername.current);
+              if (resp) location.reload();
+            }
+          }}
+        >
+          Add
+        </div>
+      </div>
+      <div
+        className="rounded-full p-4 px-6 text-3xl overflow-hidden text-center text-white bg-green-600 hover:bg-green-400 ml-auto"
+        onClick={() => setisOpen(!isOpen)}
+      >
+        +
+      </div>
+    </div>
+  );
+};
 
 const ContactMenuItem: React.FC<ContactInterface> = ({
   userName,
@@ -95,6 +139,7 @@ const ContactSidePanel: React.FC = () => {
       {contactsList.current.map((item, index) => {
         return <ContactMenuItem key={index} {...item} />;
       })}
+      <PanelAddContactSection />
     </div>
   );
 };
@@ -136,7 +181,7 @@ const Contacts: React.FC = () => {
     >
       <SessionProvider
         session={session.current}
-        refetchInterval={5 * 60}
+        refetchInterval={10 * 60}
         refetchOnWindowFocus={false}
       >
         <ContactSidePanel />
