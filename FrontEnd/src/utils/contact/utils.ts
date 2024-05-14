@@ -34,8 +34,12 @@ export const getContacts = async (
           private_key,
         }),
       });
-      var c: ContactInterface[] = await resp.json();
-      return c;
+      if (resp.ok) {
+        var c: ContactInterface[] = await resp.json();
+        return c;
+      } else {
+        return [];
+      }
     } catch (e: any) {
       console.error(e.message);
       return [];

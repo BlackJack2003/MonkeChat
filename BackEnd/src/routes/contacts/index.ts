@@ -21,23 +21,18 @@ router.post("/getContacts", async (req, res) => {
       console.log("password no match");
       return;
     }
-    const promises = user.contacts.map(async (contact: string) => {
+    var toSend: { userName: string; img: string }[] = [];
+    for (let i = 0; i < user.contacts.length; i++) {
+      var contact: string = user.contacts[i].cid;
       const p = await User.findById(contact);
-      return { userName: p.name, img: p.image };
-    });
+      if (p != null) toSend.push({ userName: p.name, img: p.image });
+    }
 
-    Promise.all(promises)
-      .then((result) => {
-        res.json(result);
-        console.log("Sent contacts of user:" + name);
-        return;
-      })
-      .catch((error) => {
-        console.error("Error occurred while processing contacts:", error);
-        res.status(500).json({ error: "An error occurred" });
-      });
+    res.json(toSend);
+    console.log("Sent contacts of user:" + name);
+    return;
   } catch (e: any) {
-    res.status(500).send("Nope");
+    res.status(500).json([]);
     console.error(e.message);
     return;
   }
