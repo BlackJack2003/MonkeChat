@@ -126,25 +126,25 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
 };
 
 const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const [list, setList] = useState<ChatMenuItemInterface[]>([]);
-  const [searchVal, setSearchVal] = useState<string>("");
-  const { data } = useSession();
-
+  const searchVal = useRef<string>("");
+  var { data } = useSession();
+  const [update, setupdate] = useState(false);
+  var list = useRef<ChatMenuItemInterface[]>([]);
   useEffect(() => {
-    const fetchData = async () => {
-      if (data) {
-        const chats = await getChats(data);
-        setList(chats);
-        console.log("List:", chats);
-      }
+    const _ = async () => {
+      list.current = await getChats(data);
+      setupdate(!update);
+      console.log("List.current:", list.current);
     };
-    fetchData();
+    _();
+    return () => {};
   }, [data]);
-
-  if (!data) return null;
-
+  if (data == null) return <></>;
   return (
-    <div className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x">
+    <div
+      className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x"
+      style={{ alignContent: "flex-start" }}
+    >
       <div className="text-2xl font-bold">Chat&apos;s</div>
       <input
         type="text"
@@ -153,10 +153,10 @@ const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         placeholder="Enter for search..."
         className="mt-4 p-2 px-4 rounded-md hover:ring-2 active:ring-4 ring-teal-300 dark:bg-gray-700 border-b-teal-700 border-b-2"
         onChange={(e) => {
-          setSearchVal(e.target.value);
+          searchVal.current = e.target.value;
         }}
       />
-      {list.map((item, index) => {
+      {list.current.map((item, index) => {
         return <ChatMenuItem key={index} {...item} />;
       })}
     </div>
