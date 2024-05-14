@@ -12,5 +12,6 @@ export const config = {
     "/contacts/:path*",
     "/backEndApi/settings/:path*",
     "/backEndApi/contacts/:path*",
+    "/backEndApi/chat/:path*",
   ],
 };
