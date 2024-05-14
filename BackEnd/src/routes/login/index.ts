@@ -155,7 +155,7 @@ router.post("/sessionUserData", async (req, res) => {
     }
     res.json({
       name: search.name,
-      email: search.email.username + "@" + search.email.domain,
+      email: email.username + "@" + email.domain,
       image: search.image,
       public_key: search.public_key,
       private_key: search.private_key,

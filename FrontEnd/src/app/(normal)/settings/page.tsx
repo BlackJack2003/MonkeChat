@@ -1,8 +1,15 @@
 "use client";
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useRef,
+} from "react";
 import { Source_Sans_3 } from "next/font/google";
 import AccountSection from "./userSetting/account";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 const NoneMenu: React.FC = () => {
   return <></>;
@@ -81,7 +88,14 @@ const SettingSidePanel: React.FC = () => {
 
 export const Setting = () => {
   const [selected, setSelected] = useState<MenuItems>(MenuItems.noItems);
-  useEffect(() => setSelected(MenuItems.Accounts), []);
+  const sessionRef = useRef<Session | null>(null);
+  useEffect(() => {
+    setSelected(MenuItems.Accounts);
+    const _ = async () => {
+      sessionRef.current = await getSession();
+    };
+    _();
+  }, []);
   return (
     <SettingsContext.Provider value={{ selected, setSelected }}>
       <div
@@ -95,7 +109,11 @@ export const Setting = () => {
           <div className="grid grid-cols-8 pt-3 sm:grid-cols-10">
             <SettingSidePanel />
             <div className="col-span-8 overflow-x-hidden rounded-xl sm:px-8 sm:shadow bg-white dark:bg-gray-900 min-h-[75vh]">
-              <SessionProvider>
+              <SessionProvider
+                session={sessionRef.current}
+                refetchInterval={10 * 60}
+                refetchOnWindowFocus={false}
+              >
                 {selected == MenuItems.Accounts &&
                   menuItemLookUp.Accounts.MenuNode}
               </SessionProvider>

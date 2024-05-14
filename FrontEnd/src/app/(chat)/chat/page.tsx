@@ -92,10 +92,19 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
   lastMsg = "",
   isActive = false,
   ChatId,
+  updateAt = "0",
 }) => {
   const imgSize = 48;
   const { panel, setPanel } = GetChatContext();
   isActive = panel.userName === Name;
+  const dateObj = new Date(Date.parse(updateAt) || 0);
+  const timeString = `${
+    dateObj.getDate() < 10 ? "0" + dateObj.getDate() : dateObj.getDate()
+  }/${
+    dateObj.getMonth() < 10 ? "0" + dateObj.getMonth() : dateObj.getMonth()
+  } ${dateObj.getHours() % 12}:${dateObj.getMinutes()} ${
+    dateObj.getHours() > 12 ? "PM" : "AM"
+  }`;
   return (
     <div
       className={
@@ -114,12 +123,14 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
         style={{ height: imgSize, width: imgSize }}
         className="rounded-full ml-2 ring-2 ring-slate-700 h-fit w-fit my-auto"
       />
-      <div className="flex flex-col ml-2">
+      <div className="flex flex-col ml-2 flex-grow">
         <div className="text-2xl">
           <p className=" font-[400]">{Name}</p>
           <p className=" text-xs ">{status}</p>
         </div>
-        <div className="overflow-hidden text-sm">{lastMsg}</div>
+        <div className="overflow-hidden text-sm flex w-full">
+          {lastMsg} <p className="ml-auto mr-2">{timeString}</p>{" "}
+        </div>
       </div>
     </div>
   );
@@ -133,8 +144,13 @@ const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     const _ = async () => {
       list.current = await getChats(data);
+      console.log("Chats", list.current);
+      list.current.sort(function (a, b) {
+        var x = Date.parse(a.updateAt) || 0;
+        var y = Date.parse(b.updateAt) || 0;
+        return x < y ? -1 : x > y ? 1 : 0;
+      });
       setupdate(!update);
-      console.log("List.current:", list.current);
     };
     _();
     return () => {};
@@ -281,9 +297,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
 };
 
 const Chat: React.FC = () => {
-  const [panel, setPanel] = useState<ChatPanelInterface>({
-    userName: "kim-il-sung",
-  });
+  const [panel, setPanel] = useState<ChatPanelInterface>({});
   var session = useRef<Session | null>(null);
   useEffect(() => {
     let _ = async () => {
@@ -300,10 +314,7 @@ const Chat: React.FC = () => {
         refetchOnWindowFocus={false}
       >
         <ChatMenu />
-        <ChatPanel {...panel}>
-          {/* <MessageBox text="Hello" />
-          <MessageBox text="Bye" mine={true} /> */}
-        </ChatPanel>
+        <ChatPanel {...panel}></ChatPanel>
       </SessionProvider>
     </ChatPanelContext.Provider>
   );

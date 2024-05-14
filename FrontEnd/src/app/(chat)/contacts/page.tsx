@@ -111,8 +111,12 @@ const ContactSidePanel: React.FC = () => {
     const _ = async () => {
       if (data != null) {
         contactsList.current = await getContacts(data);
+        contactsList.current.sort(function (a, b) {
+          var x = a.userName || "";
+          var y = b.userName || "";
+          return x < y ? -1 : x > y ? 1 : 0;
+        });
         setupdate(!update);
-        console.log(contactsList.current);
       }
     };
     _();

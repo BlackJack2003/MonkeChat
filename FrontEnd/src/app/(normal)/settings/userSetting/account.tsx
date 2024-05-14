@@ -59,21 +59,25 @@ const DelMenu: React.FC<{ username: string }> = ({ username }) => {
 
 const AccountSection: React.FC = () => {
   const { data } = useSession();
-  console.log("Data:" + JSON.stringify(data));
-  const {
-    name = undefined,
-    email = undefined,
-    image = undefined,
-  }: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  } = data?.user || {};
+  var name = useRef<string | null>(null);
+  var email = useRef<string | null>(null);
+  var image = useRef<string | null>(null);
+  useEffect(() => {
+    if (data?.user) {
+      name.current = data?.user.name;
+      email.current = data?.user.email;
+      image.current = data?.user.image;
+      setupdate(!update);
+      console.log(data);
+    }
+    return () => {};
+  }, [data]);
   const [delMenuOpen, setdelMenuOpen] = useState(false);
+  const [update, setupdate] = useState(false);
   var oldPass = useRef("");
   var newPass = useRef("");
   const [ShowPass, setShowPass] = useState(false);
-  if (name == null || name == undefined) return <></>;
+  if (name.current == null || name.current == undefined) return <></>;
   return (
     <>
       <div className="pt-4">
@@ -89,7 +93,7 @@ const AccountSection: React.FC = () => {
               <div className="text-red-600"> &nbsp; Not Set</div>
             )}
             {email !== undefined && (
-              <div className="text-blue-600"> &nbsp; {email}</div>
+              <div className="text-blue-600"> &nbsp; {email.current}</div>
             )}
           </strong>
         </div>
@@ -170,7 +174,7 @@ const AccountSection: React.FC = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              accountName: name,
+              accountName: name.current,
               oldpassword: hashString(oldPass.current),
               newpassword: hashString(newPass.current),
             }),
@@ -213,7 +217,7 @@ const AccountSection: React.FC = () => {
         >
           Continue with deletion
         </button>
-        {delMenuOpen && <DelMenu username={name}></DelMenu>}
+        {delMenuOpen && <DelMenu username={name.current}></DelMenu>}
       </div>
     </>
   );
