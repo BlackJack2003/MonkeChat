@@ -86,15 +86,16 @@ const MessageBox: React.FC<MessageInterface> = ({
 };
 
 const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
-  userName,
-  profileImg = "/def_user.jpg",
+  Name,
+  Img = "/def_user.jpg",
   status = "",
   lastMsg = "",
   isActive = false,
+  ChatId,
 }) => {
   const imgSize = 48;
   const { panel, setPanel } = GetChatContext();
-  isActive = panel.userName === userName;
+  isActive = panel.userName === Name;
   return (
     <div
       className={
@@ -104,19 +105,18 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
           : "")
       }
       onClick={(e) => {
-        setPanel(getPanel(userName));
+        setPanel(getPanel(Name));
       }}
     >
-      <Image
-        src={profileImg}
-        alt={userName}
-        height={imgSize}
-        width={imgSize}
+      <img
+        src={Img}
+        alt={Name}
+        style={{ height: imgSize, width: imgSize }}
         className="rounded-full ml-2 ring-2 ring-slate-700 h-fit w-fit my-auto"
       />
       <div className="flex flex-col ml-2">
         <div className="text-2xl">
-          <p className=" font-[400]">{userName}</p>
+          <p className=" font-[400]">{Name}</p>
           <p className=" text-xs ">{status}</p>
         </div>
         <div className="overflow-hidden text-sm">{lastMsg}</div>
@@ -126,14 +126,25 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
 };
 
 const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const searchVal = useRef<string>("");
+  const [list, setList] = useState<ChatMenuItemInterface[]>([]);
+  const [searchVal, setSearchVal] = useState<string>("");
   const { data } = useSession();
-  if (data == null) return <></>;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (data) {
+        const chats = await getChats(data);
+        setList(chats);
+        console.log("List:", chats);
+      }
+    };
+    fetchData();
+  }, [data]);
+
+  if (!data) return null;
+
   return (
-    <div
-      className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x"
-      style={{ alignContent: "flex-start" }}
-    >
+    <div className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x">
       <div className="text-2xl font-bold">Chat&apos;s</div>
       <input
         type="text"
@@ -142,11 +153,10 @@ const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         placeholder="Enter for search..."
         className="mt-4 p-2 px-4 rounded-md hover:ring-2 active:ring-4 ring-teal-300 dark:bg-gray-700 border-b-teal-700 border-b-2"
         onChange={(e) => {
-          searchVal.current = e.target.value;
+          setSearchVal(e.target.value);
         }}
       />
-
-      {getChats(data).map((item, index) => {
+      {list.map((item, index) => {
         return <ChatMenuItem key={index} {...item} />;
       })}
     </div>

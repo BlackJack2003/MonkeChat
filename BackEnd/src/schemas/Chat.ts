@@ -12,12 +12,17 @@ export const Message =
   mongoose.models.message || mongoose.model("message", messageSchema);
 
 // Define schema for chat
-const chatSchema = new mongoose.Schema({
-  pepole: [{ type: mongoose.Types.ObjectId, ref: "user", required: true }], // Assuming person1 and person2 are references to User model
-  messages: [{ type: mongoose.Types.ObjectId, ref: "message" }], // Array of references to Message model
-});
+const chatSchema = new mongoose.Schema(
+  {
+    pepole: [{ type: mongoose.Types.ObjectId, ref: "user", required: true }], // Assuming person1 and person2 are references to User model
+    messages: [{ type: mongoose.Types.ObjectId, ref: "message" }], // Array of references to Message model
+    name: String,
+    image: String,
+  },
+  { timestamps: true }
+);
 
 // Define Chat model
-const chat = mongoose.models.chat || mongoose.model("chat", chatSchema);
+const Chat = mongoose.models.chat || mongoose.model("chat", chatSchema);
 
-export default chat;
+export default Chat;

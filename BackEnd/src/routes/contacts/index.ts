@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
-import mongoose from "mongoose";
 import User from "../../schemas/User";
+import { addContact } from "../../utils/contacts";
 
 router.post("/getContacts", async (req, res) => {
   try {
@@ -59,18 +59,16 @@ router.post("/addContact", async (req, res) => {
       console.log("password no match");
       return;
     }
-    const a_user = await User.findOne({ name: user_to_add });
-    if (a_user == null || a_user == undefined) {
-      res.status(500).send("Nope");
-      console.log("User:" + name + " not found");
+    var x = await addContact(name, user_to_add);
+    if (x) {
+      res.send("Done");
+      return;
+    } else {
+      res.status(500).send("An error occurred while adding contact");
       return;
     }
-    user.contacts.push(a_user._id);
-    await user.save();
-    res.send("Done");
-    return;
-  } catch (error: any) {
-    console.error(error.message);
+  } catch (e: any) {
+    console.error(e.message);
     res.status(500).send("An error occurred while adding contact");
     return;
   }

@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, model } from "mongoose";
+import chat from "./Chat";
 
 const emailSchema = new mongoose.Schema({
   username: { type: String, required: true },
@@ -29,8 +30,13 @@ const userSchema = new mongoose.Schema({
   },
   public_key: { type: "string", required: true },
   private_key: { type: "string", required: true },
-  contacts: [{ type: mongoose.Types.ObjectId, ref: "user" }],
-  chats: [{ type: mongoose.Types.ObjectId, ref: "chat" }],
+  contacts: [
+    {
+      cid: { type: mongoose.Types.ObjectId, ref: "user", required: true },
+      chat: { type: mongoose.Types.ObjectId, ref: "chat", required: true },
+    },
+  ],
+  groupChats: [{ type: mongoose.Types.ObjectId, ref: "chat" }],
 });
 
 const User = mongoose.models.user || mongoose.model("user", userSchema);

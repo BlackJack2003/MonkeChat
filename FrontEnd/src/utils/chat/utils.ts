@@ -6,7 +6,6 @@ import {
   ChatPanelInterface,
 } from "../../app/(chat)/chat/interfaces";
 
-
 export const getPanel: (userName: string) => ChatPanelInterface = function (
   userName: string
 ) {
@@ -19,38 +18,50 @@ export const getPanel: (userName: string) => ChatPanelInterface = function (
   }
 };
 
-export const getChats: (session: Session) => ChatMenuItemInterface[] =
-  function (session: Session) {
-    if (session?.user == undefined) return [];
-    else return [
-      {
-        userName:"kim-il-sung",
-        status:"bye",
-        lastMsg:"goodbye comrade"},
-    {
-          userName:"kim-jong-un",
-          status:"hello",
-          lastMsg:"Hello comrade"
-    }
-  ];
-  };
-
-export const getMessagesAll:(session:Session|null,userName:string|null)=>MessageInterface[]=function(session,userName)
-{
-  if(session==null||userName==null)
+export const getChats: (
+  session: Session | null
+) => Promise<ChatMenuItemInterface[]> = async function (session) {
+  try {
+    if (session == null) return [];
+    const data = session.user;
+    var { name, private_key } = data;
+    var resp = await fetch("/backEndApi/chat/getChats", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        private_key,
+      }),
+    });
+    var toRet: ChatMenuItemInterface[] = await resp.json();
+    return toRet;
+  } catch (e: any) {
+    console.error(e.message);
     return [];
-  return [
-  {
-    text:`Hello ${session.user?.name}, ${userName} speaking`,
-    mine:false,
-    time:Date.now()
   }
+};
+
+export const getMessagesAll: (
+  session: Session | null,
+  userName: string | null
+) => MessageInterface[] = function (session, userName) {
+  if (session == null || userName == null) return [];
+  return [
+    {
+      text: `Hello ${session.user?.name}, ${userName} speaking`,
+      mine: false,
+      time: Date.now(),
+    },
   ];
-}
+};
 
-
-export const sendMessage:(session:Session|null,userName:string|null,message:MessageInterface)=>boolean=function(session,userName,message)
-{
+export const sendMessage: (
+  session: Session | null,
+  userName: string | null,
+  message: MessageInterface
+) => boolean = function (session, userName, message) {
   return true;
-}
+};
 // export const sendMessage:(session:Session)=>void=function

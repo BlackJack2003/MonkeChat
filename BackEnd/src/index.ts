@@ -4,6 +4,7 @@ import User, { Email } from "./schemas/User";
 import { hashString, generateKeyPair } from "./utils/login.js";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import { addContact } from "./utils/contacts";
 
 dotenv.config({ path: ".env.local" });
 
@@ -11,6 +12,7 @@ const loginRouter = require("./routes/login/index");
 const feedBackRouter = require("./routes/Feedback/index");
 const settingsRouter = require("./routes/settings/index");
 const contactsRouter = require("./routes/contacts/index");
+const chatRouter = require("./routes/chat/index");
 
 const app = express();
 
@@ -74,7 +76,7 @@ async function main() {
   }
 }
 
-async function setDefaultUsers() {
+export async function setDefaultUsers() {
   try {
     for (const user of usersToCreate) {
       const { publicKey, privateKey } = await generateKeyPair();
@@ -108,15 +110,21 @@ async function setDefaultUsers() {
   }
 }
 
-async function updateUserContacts() {
+export async function updateUserContacts() {
   try {
     for (const itemId of _ids) {
       let u = await User.findById(itemId);
       if (u) {
         // Filter out the current user's _id from the _ids array
         const contacts = _ids.filter((id) => id !== itemId);
-        u.contacts = contacts;
-        await u.save();
+
+        contacts.map(async (x) => {
+          let a1 = await User.findById(itemId);
+          let a2 = await User.findById(x);
+          await addContact(a1.name, a2.name);
+        });
+        // u.contacts = contacts;
+        // await u.save();
         console.log("Successfully added contacts for user:", u.name);
       }
     }
@@ -138,5 +146,6 @@ app.use("/login", loginRouter);
 app.use("/feedback", feedBackRouter);
 app.use("/settings", settingsRouter);
 app.use("/contacts", contactsRouter);
+app.use("/chat", chatRouter);
 
 app.listen(5000);
