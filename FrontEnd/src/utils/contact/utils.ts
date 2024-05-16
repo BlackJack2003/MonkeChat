@@ -55,7 +55,7 @@ export const addContact: (
   if (session == null) return false;
   const data = session.user;
   var { name, private_key } = data;
-  var resp = await fetch("/backEndApi/contacts/getContacts", {
+  var resp = await fetch("/backEndApi/contacts/addContact", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

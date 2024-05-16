@@ -41,6 +41,7 @@ router.post("/getContacts", async (req, res) => {
 router.post("/addContact", async (req, res) => {
   try {
     const b = req.body;
+    console.log(b);
     const { name, private_key, user_to_add } = b;
     var user = await User.findOne({ name: name });
 

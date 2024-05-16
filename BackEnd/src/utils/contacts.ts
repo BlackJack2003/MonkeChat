@@ -46,11 +46,13 @@ export async function addContact(a: string, b: string): Promise<boolean> {
     }
 
     // Create a new chat
-    const chat = new Chat({ people: [userA._id, userB._id] });
+    const chat = new Chat();
+    chat.people.push(userA._id);
+    chat.people.push(userB._id);
     await chat.save();
 
     // Create a new contact object for 'a's contacts
-    const newContact = {
+    const newContactA = {
       cid: userB._id,
       chat: chat._id,
     };
@@ -59,17 +61,34 @@ export async function addContact(a: string, b: string): Promise<boolean> {
     let inserted = false;
     for (let i = 0; i < userA.contacts.length; i++) {
       if (String(userA.contacts[i].cid) > String(userB._id)) {
-        userA.contacts.splice(i, 0, newContact);
+        userA.contacts.splice(i, 0, newContactA);
         inserted = true;
         break;
       }
     }
     if (!inserted) {
-      userA.contacts.push(newContact);
+      userA.contacts.push(newContactA);
+    }
+    const newContactB = {
+      cid: userA._id,
+      chat: chat._id,
+    };
+    // Insert the new contact into 'b's contacts array maintaining lexicographic order
+    inserted = false;
+    for (let i = 0; i < userB.contacts.length; i++) {
+      if (String(userB.contacts[i].cid) > String(userA._id)) {
+        userB.contacts.splice(i, 0, newContactB);
+        inserted = true;
+        break;
+      }
+    }
+    if (!inserted) {
+      userB.contacts.push(newContactB);
     }
 
     // Save the updated 'a' user document
     await userA.save();
+    await userB.save();
     return true;
   } catch (e: any) {
     console.error(e.message);

@@ -12,6 +12,7 @@ import { ContactInterface } from "./interfaces";
 import Image from "next/image";
 import { getContacts, getPanel, addContact } from "@/utils/contact/utils";
 import { Session } from "next-auth";
+import Error from "@/components/error";
 
 const ContactPanelContext = createContext<{
   panel: ContactInterface;
@@ -175,7 +176,7 @@ const Contacts: React.FC = () => {
     _();
     return () => {};
   }, []);
-
+  const [error, seterror] = useState("");
   return (
     <ContactPanelContext.Provider
       value={{
@@ -183,6 +184,7 @@ const Contacts: React.FC = () => {
         setPanel: setpanel,
       }}
     >
+      <Error text={error} settext={seterror} />
       <SessionProvider
         session={session.current}
         refetchInterval={10 * 60}

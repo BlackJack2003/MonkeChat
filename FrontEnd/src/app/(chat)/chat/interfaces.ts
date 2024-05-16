@@ -11,7 +11,7 @@ export interface ChatMenuItemInterface {
 export interface MessageInterface {
   mine?: boolean;
   text?: string;
-  time?: number;
+  time?: number | string;
 }
 
 export interface ChatPanelInterface {
@@ -20,4 +20,5 @@ export interface ChatPanelInterface {
   status?: boolean;
   children?: React.ReactNode;
   messages?: MessageInterface[];
+  ChatId?: string;
 }

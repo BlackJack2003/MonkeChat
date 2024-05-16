@@ -18,7 +18,6 @@ import "../../../utils/chat/utils";
 import {
   getChats,
   getMessagesAll,
-  getPanel,
   sendMessage,
 } from "../../../utils/chat/utils";
 import { useSession, SessionProvider, getSession } from "next-auth/react";
@@ -114,7 +113,8 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
           : "")
       }
       onClick={(e) => {
-        setPanel(getPanel(Name));
+        // setPanel(getPanel(Name, ChatId));
+        setPanel({ userName: Name, ChatId: ChatId });
       }}
     >
       <img
@@ -200,28 +200,29 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
   userName = null,
   status = false,
   children,
+  ChatId,
 }) => {
   const { data } = useSession();
   const [update, doUpdate] = useState(0);
   const myMessages = useRef<MessageInterface[]>([]);
-  var interval: any;
+  var interval = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    myMessages.current = getMessagesAll(data, userName);
+    const _ = async () => {
+      myMessages.current = await getMessagesAll(data, userName, ChatId);
+      console.log();
+      doUpdate(update - 1);
+    };
+    _();
+
     return () => {};
-  }, [data]);
+  }, [data, userName]);
 
   useEffect(() => {
-    myMessages.current = getMessagesAll(data, userName);
-    doUpdate(update - 1);
-    return () => {};
-  }, [userName]);
-
-  useEffect(() => {
-    interval = setInterval(() => {
+    interval.current = setInterval(() => {
       doUpdate(update + 1);
-    }, 200);
+    }, 120000);
     return () => {
-      clearInterval(interval);
+      clearInterval(interval.current);
     };
   }, []);
 
@@ -260,7 +261,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
             <div
               className="rounded-full self-end z-10 ml-[-55px] my-auto hover:bg-teal-600 p-2 py-3 cursor-pointer"
               id="textInput"
-              onClick={() => {
+              onClick={async () => {
                 const textEle = document.getElementById(
                   "msgBox"
                 ) as HTMLInputElement | null;
@@ -270,13 +271,17 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
                   console.log("Not sent due to:" + text);
                   return;
                 }
-                const toSend = {
-                  text: text,
-                  mine: text[text.length - 1] != "/",
-                  time: Date.now(),
-                };
-                sendMessage(data, userName, toSend);
-                myMessages.current.push(toSend);
+                // const toSend = {
+                //   text: text,
+                //   mine: text[text.length - 1] != "/",
+                //   time: Date.now(),
+                // };
+                var _ = await sendMessage(data, userName, text, ChatId);
+                myMessages.current = await getMessagesAll(
+                  data,
+                  userName,
+                  ChatId
+                ); //;
                 if (textEle?.value) textEle.value = "";
                 doUpdate(update + 1);
               }}
