@@ -206,6 +206,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
   const [update, doUpdate] = useState(0);
   const myMessages = useRef<MessageInterface[]>([]);
   var interval = useRef<NodeJS.Timeout>();
+  var inputEle = useRef<null | HTMLInputElement>(null);
   useEffect(() => {
     const _ = async () => {
       myMessages.current = await getMessagesAll(data, userName, ChatId);
@@ -216,15 +217,43 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
 
     return () => {};
   }, [data, userName]);
+  const sendMsg = async () => {
+    const textEle = document.getElementById(
+      "msgBox"
+    ) as HTMLInputElement | null;
+    const text = textEle?.value;
+
+    if (text == null || text == undefined) {
+      console.log("Not sent due to:" + text);
+      return;
+    }
+
+    var _ = await sendMessage(data, userName, text, ChatId);
+    myMessages.current = await getMessagesAll(data, userName, ChatId); //;
+    if (textEle?.value) textEle.value = "";
+    doUpdate(update + 1);
+  };
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      sendMsg().then((x) => {});
+    }
+  };
 
   useEffect(() => {
     interval.current = setInterval(() => {
       doUpdate(update + 1);
     }, 120000);
-    return () => {
-      clearInterval(interval.current);
-    };
-  }, []);
+    const inputElement = inputEle.current;
+    if (inputElement) {
+      inputElement.addEventListener("keydown", handleKeyDown);
+      return () => {
+        clearInterval(interval.current);
+        if (inputElement) {
+          inputElement.removeEventListener("keydown", handleKeyDown);
+        }
+      };
+    }
+  });
 
   if (data == null || userName == null) return <></>;
 
@@ -255,36 +284,14 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
             <input
               type="text"
               id="msgBox"
+              ref={inputEle}
               className="w-[102%] z-5 top-0 dark:bg-gray-700 px-8 ml-[-8px]"
               placeholder="Type a message..."
             />
             <div
               className="rounded-full self-end z-10 ml-[-55px] my-auto hover:bg-teal-600 p-2 py-3 cursor-pointer"
               id="textInput"
-              onClick={async () => {
-                const textEle = document.getElementById(
-                  "msgBox"
-                ) as HTMLInputElement | null;
-                const text = textEle?.value;
-
-                if (text == null || text == undefined) {
-                  console.log("Not sent due to:" + text);
-                  return;
-                }
-                // const toSend = {
-                //   text: text,
-                //   mine: text[text.length - 1] != "/",
-                //   time: Date.now(),
-                // };
-                var _ = await sendMessage(data, userName, text, ChatId);
-                myMessages.current = await getMessagesAll(
-                  data,
-                  userName,
-                  ChatId
-                ); //;
-                if (textEle?.value) textEle.value = "";
-                doUpdate(update + 1);
-              }}
+              onClick={() => sendMsg()}
             >
               <Image
                 height={22}
