@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Provider } from "react-redux";
 import { makeStore, AppStore } from "../store/nstore";
 import { setThemeDark, setThemeLight } from "../actions/themeAction";
-import { setPassword, setSession } from "../actions/sessionAction";
+import { setSession } from "../actions/sessionAction";
 
 const loadState = () => {
   try {
@@ -35,15 +35,6 @@ const saveState = (state: any) => {
     // Log errors here, or ignore
   }
 };
-
-// Define initial session state
-// const initialState = {
-// 	image: "",
-// 	password: "",
-// 	username: "",
-// 	public_key: "",
-// 	private_key: "",
-//   };
 
 export default function StoreProvider({
   darkMode,
