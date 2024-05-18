@@ -275,12 +275,7 @@ export const Signup: React.FC<any> = ({
                       body: JSON.stringify(toSend),
                     });
                     if (resp.ok) {
-                      signIn("credentials", {
-                        username: userName.current,
-                        password: hashString(pass.current),
-                        redirect: true,
-                        callbackUrl: "/home",
-                      });
+                      window.location.href = "/";
                     } else {
                       var t = await resp.text();
                       errorMsg.current = t;
@@ -300,7 +295,7 @@ export const Signup: React.FC<any> = ({
               </a>
             </div>
             <div className="h-5"></div>
-            <ProviderList providers={providers} />{" "}
+            {/* <ProviderList providers={providers} />{" "} */}
           </div>{" "}
         </div>
       </div>{" "}

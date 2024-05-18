@@ -1,22 +1,20 @@
-import React, { useEffect } from "react";
-import "../styles/globals.css";
+// No changes needed, the provided code appears to be correct and functional
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import "@/styles/globals.css";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { useRef } from "react";
-import type {
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-} from "next";
-import { getProviders, signIn } from "next-auth/react";
-import { getServerSession } from "next-auth/next";
-import options from "../app/api/auth/[...nextauth]/options";
+import { useSearchParams, useRouter } from "next/navigation";
+import { getProviders, getSession, signIn } from "next-auth/react";
 import ErrorBox from "@/components/errorBox";
 import { hashString } from "@/utils/genral/genral";
+import Footer from "@/components/appfooter";
 
-function ProviderList({
-  providers,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+const ProviderList: React.FC<{
+  providers: Awaited<ReturnType<typeof getProviders>> | null;
+  update?: boolean;
+}> = ({ providers, update }) => {
   let rows: JSX.Element[] = [];
+  if (providers == null) return <></>;
   Object.values(providers).map((provider) => {
     if (provider.name != "Credentials")
       rows.push(
@@ -48,32 +46,28 @@ function ProviderList({
       );
   });
   return <>{rows}</>;
-}
+};
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, options);
-
-  // If the user is already logged in, redirect.
-  // Note: Make sure not to redirect to the same page
-  // To avoid an infinite loop!
-  if (session) {
-    return { redirect: { destination: "/home" } };
-  }
-
-  const providers = await getProviders();
-
-  return {
-    props: { providers: providers ?? [] },
-  };
-}
-
-function LoginPage({
-  providers,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+const LoginPage: React.FC = () => {
+  const providers = useRef<Awaited<ReturnType<typeof getProviders>> | null>(
+    null
+  );
   const errorMsg = useRef<string | string[]>("");
-  const router = useRouter();
-  const resetIds = ["email", "password"];
+  const [update, setupdate] = useState(false);
+
   useEffect(() => {
+    const _ = async () => {
+      const session = await getSession();
+      if (session) {
+        return { redirect: { destination: "/home" } };
+      }
+
+      providers.current = await getProviders();
+      setupdate(!update);
+      console.log("Updated with prolist:", providers.current);
+    };
+    _();
+    const resetIds = ["email", "password"];
     resetIds.forEach((id) => {
       try {
         var ele = document.getElementById(id) as HTMLInputElement | null;
@@ -87,9 +81,11 @@ function LoginPage({
 
   const logoSize: number = 80;
   const imUrlRef: string = 'url("/login_back_light.jpeg")';
-  const { query } = router;
-  if (query.error != undefined) {
-    errorMsg.current = query.error;
+  const search = useSearchParams();
+  //   console.log(search);
+  const error: any = search?.get("error");
+  if (error != undefined && error != null) {
+    errorMsg.current = error;
   }
   const userName = useRef("");
   const pass = useRef("");
@@ -181,14 +177,31 @@ function LoginPage({
                 <button
                   type="button"
                   className="flex w-full justify-center rounded-xl bg-stone-500 text-black dark:text-white dark:bg-slate-600  px-3 py-1.5 text-sm font-semibold leading-6  shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.preventDefault();
-                    signIn("credentials", {
+                    const toSend = {
                       username: userName.current,
                       password: hashString(pass.current),
-                      redirect: true,
-                      callbackUrl: "/home",
+                    };
+                    var resp = await fetch("/backEndApi/login/validate", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(toSend),
                     });
+                    if (resp.ok) {
+                      signIn("credentials", {
+                        username: userName.current,
+                        password: hashString(pass.current),
+                        redirect: true,
+                        callbackUrl: "/home",
+                      });
+                    } else {
+                      var t = await resp.text();
+                      errorMsg.current = t;
+                      setupdate(!update);
+                    }
                   }}
                 >
                   {" "}
@@ -197,18 +210,19 @@ function LoginPage({
               </div>{" "}
             </form>{" "}
             <div className="text-center text-sky-100 mt-2">
-              Dont have an account?&nbsp;
+              Dont have an account? 
               <a href="/signup" className=" text-sky-500">
-                Sign up!!&nbsp;
+                Sign up!! 
               </a>
             </div>
             <div className="h-5"></div>
-            <ProviderList providers={providers} />{" "}
+            {/* <ProviderList providers={providers.current} update={update} />{" "} */}
           </div>{" "}
         </div>
       </div>{" "}
+      <Footer />
     </>
   );
-}
+};
 
 export default LoginPage;

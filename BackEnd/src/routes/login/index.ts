@@ -45,6 +45,41 @@ router.get("/*", (req, res) => {
   res.send("Wrong port u need to be at 3000");
 });
 
+router.post("/validate", async (req, res) => {
+  try {
+    const b = req.body;
+    var { username, password } = b;
+    username = (username as string) || "";
+    password = (password as string) || "";
+    var search = null;
+    console.log("trying to validate user:" + username);
+    if (username.includes("@") && username.includes(".")) {
+      const [a, b] = username.split("@");
+      var email = await Email.findOne({ username: a, domain: b });
+      if (email != null) {
+        search = await User.findOne({ email: email._id }).populate("email");
+      }
+    } else {
+      //   console.log("Looking for username:" + username);
+      search = await User.findOne({ name: username }).populate("email");
+    }
+    if (search == null || search.password !== password) {
+      res.status(300).send(null);
+      console.log("failed to validate:" + username);
+      return;
+    }
+    var toSend = {
+      isCorrect: true,
+    };
+    res.send(toSend);
+    console.log("User with cred authenticated:" + username);
+  } catch (e: any) {
+    console.error(e.message);
+    res.status(500).send("Error auth");
+    return;
+  }
+});
+
 router.post("/getMail", async (req, res) => {
   try {
     var { email } = req.body;
