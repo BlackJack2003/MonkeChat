@@ -37,9 +37,11 @@ const saveState = (state: any) => {
 
 export default function StoreProvider({
   darkMode,
+  session,
   children,
 }: {
   darkMode: boolean;
+  session: any;
   children: React.ReactNode;
 }) {
   const storeRef = useRef<AppStore | null>(null);

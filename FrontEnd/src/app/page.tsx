@@ -8,6 +8,7 @@ import { getProviders, getSession, signIn } from "next-auth/react";
 import ErrorBox from "@/components/errorBox";
 import { hashString } from "@/utils/genral/genral";
 import Footer from "@/components/appfooter";
+import { useAppDispatch } from "@/redux/hooks/hooks";
 
 const ProviderList: React.FC<{
   providers: Awaited<ReturnType<typeof getProviders>> | null;
@@ -89,6 +90,7 @@ const LoginPage: React.FC = () => {
   }
   const userName = useRef("");
   const pass = useRef("");
+  const dispatch = useAppDispatch();
 
   return (
     <>

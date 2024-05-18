@@ -47,6 +47,12 @@ const options: NextAuthOptions = {
   pages: {
     signIn: "/",
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 60, // 30 minutes
+    // Update the session token only if the session is half expired
+    updateAge: 20 * 60, // 15 minutes
+  },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       if (profile == undefined || profile.email == undefined) return true;

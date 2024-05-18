@@ -9,7 +9,7 @@ export const metadata = {
 const RootLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <html>
-      <StoreProvider darkMode={false}>
+      <StoreProvider darkMode={false} session={{}}>
         <head></head>
         <body className="w-screen">
           <div
