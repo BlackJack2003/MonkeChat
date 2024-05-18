@@ -1,12 +1,22 @@
 // File: sessionActions.ts (Actions)
 
 // Define action types
+
+export interface sessionInterface {
+  image?: string;
+  password?: string;
+  username?: string;
+  public_key?: string;
+  private_key?: string;
+}
+
 export enum SessionActionTypes {
   SET_IMAGE = "SET_IMAGE",
   SET_USERNAME = "SET_USERNAME",
   SET_PASSWORD = "SET_PASSWORD",
   SET_PUBLIC_KEY = "SET_PUBLIC_KEY",
   SET_PRIVATE_KEY = "SET_PRIVATE_KEY",
+  SET_SESSION = "SET_SESSION",
 }
 
 // Define action creators
@@ -32,5 +42,10 @@ export const setPublicKey = (payload: string) => ({
 
 export const setPrivateKey = (payload: string) => ({
   type: SessionActionTypes.SET_PRIVATE_KEY,
+  payload: payload,
+});
+
+export const setSession = (payload: sessionInterface) => ({
+  type: SessionActionTypes.SET_SESSION,
   payload: payload,
 });

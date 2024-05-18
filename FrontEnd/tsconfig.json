@@ -1,14 +1,7 @@
 {
   "compilerOptions": {
-	"typeRoots": [
-		"./node_modules/@types",
-		"./src/types"
-	],
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,16 +13,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "allowImportingTsExtensions":true,
+    "allowImportingTsExtensions": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "target": "ES2017",
     "strictNullChecks": true
@@ -41,7 +32,5 @@
     ".next/types/**/*.ts",
     "src/pages/_app.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

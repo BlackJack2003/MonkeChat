@@ -1,5 +1,4 @@
 import React from "react";
-import Footer from "@/components/appfooter";
 import "@/styles/globals.css";
 import ChatNavSidePanel from "@/components/chat/chatSidePanel";
 
@@ -13,7 +12,6 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {children}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

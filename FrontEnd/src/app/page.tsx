@@ -8,46 +8,8 @@ import { getProviders, getSession, signIn } from "next-auth/react";
 import ErrorBox from "@/components/errorBox";
 import { hashString } from "@/utils/genral/genral";
 import Footer from "@/components/appfooter";
-import { useAppDispatch } from "@/redux/hooks/hooks";
-
-const ProviderList: React.FC<{
-  providers: Awaited<ReturnType<typeof getProviders>> | null;
-  update?: boolean;
-}> = ({ providers, update }) => {
-  let rows: JSX.Element[] = [];
-  if (providers == null) return <></>;
-  Object.values(providers).map((provider) => {
-    if (provider.name != "Credentials")
-      rows.push(
-        <div
-          key={provider.name}
-          className="w-full max-h-fit mx-auto my-auto bg-gray-700 text-white text-center py-2 px-4 border-2 rounded-xl hover:border-x-4 hover:border-violet-700 "
-        >
-          <button
-            onClick={() => signIn(provider.id)}
-            style={{
-              display: "flex",
-              alignContent: "center",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <Image
-              src={"/" + provider.name + ".svg"}
-              height={32}
-              width={32}
-              alt="github"
-              style={{ marginRight: 10 }}
-            />
-            Sign in with {provider.name}
-          </button>
-        </div>
-      );
-  });
-  return <>{rows}</>;
-};
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { setPassword } from "@/redux/actions/sessionAction";
 
 const LoginPage: React.FC = () => {
   const providers = useRef<Awaited<ReturnType<typeof getProviders>> | null>(
@@ -57,17 +19,6 @@ const LoginPage: React.FC = () => {
   const [update, setupdate] = useState(false);
 
   useEffect(() => {
-    const _ = async () => {
-      const session = await getSession();
-      if (session) {
-        return { redirect: { destination: "/home" } };
-      }
-
-      providers.current = await getProviders();
-      setupdate(!update);
-      console.log("Updated with prolist:", providers.current);
-    };
-    _();
     const resetIds = ["email", "password"];
     resetIds.forEach((id) => {
       try {
@@ -79,11 +30,18 @@ const LoginPage: React.FC = () => {
     });
     return () => {};
   }, []);
-
+  useEffect(() => {
+    const _ = async () => {
+      const session = await getSession();
+      if (session) {
+        window.location.href = "home";
+      }
+    };
+    _();
+  });
   const logoSize: number = 80;
   const imUrlRef: string = 'url("/login_back_light.jpeg")';
   const search = useSearchParams();
-  //   console.log(search);
   const error: any = search?.get("error");
   if (error != undefined && error != null) {
     errorMsg.current = error;
@@ -91,7 +49,7 @@ const LoginPage: React.FC = () => {
   const userName = useRef("");
   const pass = useRef("");
   const dispatch = useAppDispatch();
-
+  var ting: string = useAppSelector((s) => s.session.password);
   return (
     <>
       <div
@@ -193,6 +151,14 @@ const LoginPage: React.FC = () => {
                       body: JSON.stringify(toSend),
                     });
                     if (resp.ok) {
+                      console.log("Dispatching setPassword");
+                      var oldS: any = window.localStorage.getItem("app_state");
+                      oldS = JSON.parse(oldS || "");
+                      if (oldS.session != undefined) {
+                        oldS.session.password = pass.current;
+                      }
+                      oldS = JSON.stringify(oldS);
+                      window.localStorage.setItem("app_state", oldS);
                       signIn("credentials", {
                         username: userName.current,
                         password: hashString(pass.current),
@@ -222,7 +188,6 @@ const LoginPage: React.FC = () => {
           </div>{" "}
         </div>
       </div>{" "}
-      <Footer />
     </>
   );
 };

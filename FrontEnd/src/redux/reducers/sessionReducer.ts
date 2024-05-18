@@ -1,8 +1,17 @@
 // File: sessionReducer.ts (Reducer)
-import { SessionActionTypes } from "../actions/sessionAction.ts";
+import {
+  SessionActionTypes,
+  sessionInterface,
+} from "../actions/sessionAction.ts";
 
-// Define initial state
-const initialState = {};
+// Define initial session state
+const initialState: sessionInterface = {
+  image: "",
+  password: "",
+  username: "",
+  public_key: "",
+  private_key: "",
+};
 
 // Define reducer
 const sessionReducer = (state = initialState, action: any) => {
@@ -25,13 +34,16 @@ const sessionReducer = (state = initialState, action: any) => {
     case SessionActionTypes.SET_PUBLIC_KEY:
       return {
         ...state,
-        publicKey: action.payload,
+        public_key: action.payload,
       };
     case SessionActionTypes.SET_PRIVATE_KEY:
       return {
         ...state,
-        privateKey: action.payload,
+        private_key: action.payload,
       };
+    case SessionActionTypes.SET_SESSION:
+      var rv: sessionInterface = action.payload;
+      return rv;
     default:
       return state;
   }

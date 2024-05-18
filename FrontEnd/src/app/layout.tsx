@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import StoreProvider from "@/redux/providers/StoreProvider";
 import "@/styles/globals.css";
+import Footer from "@/components/appfooter";
 export const metadata = {
   title: "Monke chat",
   description: "Reject humanity return to monke",
@@ -9,7 +10,7 @@ export const metadata = {
 const RootLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <html>
-      <StoreProvider darkMode={false} session={{}}>
+      <StoreProvider>
         <head></head>
         <body className="w-screen">
           <div
@@ -17,6 +18,7 @@ const RootLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
             className="min-h-screen bg-myBg pb-2 text-black dark:text-white min-w-screen"
           >
             {children}
+            <Footer />
           </div>
         </body>
       </StoreProvider>

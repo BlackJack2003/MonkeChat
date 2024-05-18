@@ -1,9 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { setThemeDark, setThemeLight } from "../redux/actions/themeAction";
 import { AppDispatch } from "../redux/store/nstore";
 import { _Footer } from "./footer";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 function checkAndSetTheme(dispatch: AppDispatch, isChecked: boolean) {
   var root = document.getElementById("myRoot");
@@ -22,13 +24,23 @@ function checkAndSetTheme(dispatch: AppDispatch, isChecked: boolean) {
 function ModeBtn() {
   //isChecked == darkmode
   const dispatch = useAppDispatch();
+  let data = useRef<Session | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const preferredThemeDark = useAppSelector((state: any) => {
     return state.theme.darkMode;
   });
+  const myPass = useAppSelector((state) => state.session.password);
   useEffect(() => {
     setIsChecked(preferredThemeDark);
+    const fetchData = async () => {
+      console.log("Current pass:", myPass);
+      data.current = await getSession();
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 5 * 60 * 1000); // Fetch data every 5 minutes
+    return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
+
   useEffect(() => {
     checkAndSetTheme(dispatch, isChecked);
   }, [isChecked, dispatch]);
