@@ -85,8 +85,8 @@ export const Signup: React.FC<any> = ({
   useEffect(() => {
     return () => {};
   }, [update]);
-  const resetIds = ["email", "password", "name"];
   useEffect(() => {
+    const resetIds = ["email", "password", "name"];
     resetIds.forEach((id) => {
       try {
         var ele = document.getElementById(id) as HTMLInputElement | null;
