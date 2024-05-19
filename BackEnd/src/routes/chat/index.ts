@@ -1,8 +1,11 @@
-import mongoose from "mongoose";
 import User from "../../schemas/User";
-import Chat from "../../schemas/Chat";
 import express from "express";
-import { getChats, getMessagesAll, sendMessage } from "../../utils/chats";
+import {
+  ChatMenuItemInterface,
+  getChats,
+  getMessagesAll,
+  sendMessage,
+} from "../../utils/chats";
 const router = express.Router();
 
 router.post("/getChats", async (req, res) => {
@@ -20,7 +23,7 @@ router.post("/getChats", async (req, res) => {
       console.log("password no match");
       return;
     }
-    const toSend = await getChats(user._id);
+    const toSend: ChatMenuItemInterface[] = await getChats(user._id);
     console.log("Send chat list of user:", name);
     res.json(toSend);
   } catch (error: any) {

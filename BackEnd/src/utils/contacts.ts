@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import User from "../schemas/User";
 import Chat from "../schemas/Chat";
+import { MyGenerateKeyPair, encryptWithPublicKey } from "./login";
 
 function binarySearch(arr: any[], target: any): number {
   let left = 0;
@@ -24,6 +25,7 @@ function binarySearch(arr: any[], target: any): number {
 //Add b to a's contact list and add matching chat
 export async function addContact(a: string, b: string): Promise<boolean> {
   try {
+    const { publicKey, privateKey } = await MyGenerateKeyPair();
     var userA = await User.findOne({ name: a });
 
     if (userA == null || userA == undefined) {
@@ -46,9 +48,16 @@ export async function addContact(a: string, b: string): Promise<boolean> {
     }
 
     // Create a new chat
-    const chat = new Chat();
-    chat.people.push(userA._id);
-    chat.people.push(userB._id);
+    const chat = new Chat({ public_key: publicKey });
+    chat.people.push({
+      pid: userA._id,
+      priKey: encryptWithPublicKey(userA.public_key, privateKey),
+    });
+    chat.people.push({
+      pid: userB._id,
+      priKey: encryptWithPublicKey(userB.public_key, privateKey),
+    });
+    chat.people.sort((a: any, b: any) => a.pid.localeCompare(b.pid));
     await chat.save();
 
     // Create a new contact object for 'a's contacts

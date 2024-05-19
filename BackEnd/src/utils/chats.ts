@@ -8,7 +8,9 @@ export interface ChatMenuItemInterface {
   lastMsg?: string;
   updateAt: string;
   isActive?: boolean;
-  ChatId?: string;
+  ChatId: string;
+  private_key: string;
+  public_key: string;
 }
 
 export async function getChats(
@@ -16,23 +18,35 @@ export async function getChats(
 ): Promise<ChatMenuItemInterface[]> {
   try {
     const user = await User.findById(userId);
-    var rl: any[] = [];
+    var rl: ChatMenuItemInterface[] = [];
     for (let i = 0; i < user.contacts.length; i++) {
       const userB = await User.findById(user.contacts[i].cid);
       const chat = await Chat.findById(user.contacts[i].chat);
+      const userChatPrivateKey = chat.people.find(
+        (p: any) => String(p.pid) === userId
+      )?.priKey;
       rl.push({
         Name: userB.name,
         Img: userB.image,
         ChatId: chat._id,
         updateAt: chat.updatedAt,
+        public_key: chat.public_key,
+        private_key: userChatPrivateKey,
       });
     }
     for (let i = 0; i < user.groupChats.length; i++) {
       const chatB = await Chat.findById(user.contacts[i].chat);
+      const userChatPrivateKey = chatB.people.find(
+        (p: any) => String(p.pid) === userId
+      )?.priKey;
       rl.push({
         Name: chatB.name,
         Img: chatB.image,
+        ChatId: chatB._id,
         lastMsg: chatB.updatedAt,
+        public_key: chatB.public_key,
+        private_key: userChatPrivateKey,
+        updateAt: chatB.updatedAt,
       });
     }
     return rl;
@@ -73,7 +87,6 @@ export async function getMessagesAll(
         time: Date.parse(message.createdAt),
       });
     }
-
     return ra;
   } catch (e: any) {
     console.error("Failed getmessage all func:", e.message);

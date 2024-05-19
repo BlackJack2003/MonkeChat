@@ -5,7 +5,9 @@ export interface ChatMenuItemInterface {
   lastMsg?: string;
   updateAt: string;
   isActive?: boolean;
-  ChatId?: string;
+  ChatId: string;
+  private_key: string;
+  public_key: string;
 }
 
 export interface MessageInterface {

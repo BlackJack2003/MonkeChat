@@ -6,6 +6,7 @@ export interface sessionInterface {
   image?: string;
   password?: string;
   username?: string;
+  email?: string;
   public_key?: string;
   private_key?: string;
 }
@@ -17,6 +18,7 @@ export enum SessionActionTypes {
   SET_PUBLIC_KEY = "SET_PUBLIC_KEY",
   SET_PRIVATE_KEY = "SET_PRIVATE_KEY",
   SET_SESSION = "SET_SESSION",
+  SET_EMAIL = "SET_EMAIL",
 }
 
 // Define action creators
@@ -42,6 +44,11 @@ export const setPublicKey = (payload: string) => ({
 
 export const setPrivateKey = (payload: string) => ({
   type: SessionActionTypes.SET_PRIVATE_KEY,
+  payload: payload,
+});
+
+export const setEmail = (payload: string) => ({
+  type: SessionActionTypes.SET_EMAIL,
   payload: payload,
 });
 

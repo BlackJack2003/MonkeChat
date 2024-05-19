@@ -8,6 +8,7 @@ import {
 const initialState: sessionInterface = {
   image: "",
   password: "",
+  email: "",
   username: "",
   public_key: "",
   private_key: "",

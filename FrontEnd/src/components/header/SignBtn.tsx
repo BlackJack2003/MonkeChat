@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import ImgDropMenu from "./imgDropMenu";
+import { useAppSelector } from "@/redux/hooks/hooks";
 
 interface SignBtnInterface {
   val: string;
@@ -73,18 +74,22 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 };
 
 const SignInOrLogo: React.FC = () => {
-  const { status, data } = useSession();
-  const {
-    name = undefined,
-    email = undefined,
-    image = undefined,
-  }: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  } = data?.user || {};
+  //   const { status, data } = useSession();
+  const data = useAppSelector((s) => s.session);
+  //   const {
+  //     name = undefined,
+  //     email = undefined,
+  //     image = undefined,
+  //   }: {
+  //     name?: string | null;
+  //     email?: string | null;
+  //     image?: string | null;
+  //   } = data?.user || {};
+  var image = useAppSelector((s) => s.session.image);
+  var email = useAppSelector((s) => s.session.email);
+  var name = useAppSelector((s) => s.session.username);
   var x =
-    status == "authenticated" ? (
+    name != "" || name != null ? (
       <ProfImg imgSrc={image} />
     ) : (
       <div className="flex align-baseline">

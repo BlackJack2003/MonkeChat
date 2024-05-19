@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import User, { Email } from "./schemas/User";
-import { hashString, generateKeyPair } from "./utils/login.js";
+import { hashString, MyGenerateKeyPair, encryptData } from "./utils/login.js";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import { addContact } from "./utils/contacts";
@@ -16,7 +16,7 @@ const chatRouter = require("./routes/chat/index");
 
 const app = express();
 
-const dbAddr: string = "mongodb://127.0.0.1:27017/monkeChatDb";
+const dbAddr: string = "mongodb://127.0.0.1:27017/monkeChatDb1";
 
 interface Email {
   username: string;
@@ -104,8 +104,7 @@ export async function setDefaultUsers() {
     mongoose.connection.db.dropDatabase();
     console.log("Successfully deleted db");
     for (const user of usersToCreate) {
-      const { publicKey, privateKey } = await generateKeyPair();
-
+      const { publicKey, privateKey } = await MyGenerateKeyPair();
       const email = await Email.create({
         username: user.email.username,
         domain: user.email.domain,
@@ -116,7 +115,7 @@ export async function setDefaultUsers() {
         password: hashString(user.password),
         email: email._id,
         public_key: publicKey,
-        private_key: privateKey,
+        private_key: encryptData(user.password, privateKey),
       });
 
       let nu = await User.findOne({ name: user.name });

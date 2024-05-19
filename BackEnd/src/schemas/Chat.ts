@@ -17,7 +17,14 @@ export const Message =
 // Define schema for chat
 const chatSchema = new mongoose.Schema(
   {
-    people: [{ type: mongoose.Types.ObjectId, ref: "user", required: true }], // Assuming person1 and person2 are references to User model
+    public_key: { type: String, required: true },
+    people: [
+      {
+        pid: { type: mongoose.Types.ObjectId, ref: "user", required: true },
+        priKey: { type: String, required: true },
+      },
+    ], // Assuming person1 and person2 are references to User model
+
     messages: [{ type: mongoose.Types.ObjectId, ref: "message" }], // Array of references to Message model
     name: String,
     image: String,

@@ -1,6 +1,6 @@
 import express from "express";
 import User, { Email } from "../../schemas/User";
-import { generateKeyPair } from "../../utils/login";
+import { MyGenerateKeyPair } from "../../utils/login";
 
 const router = express.Router();
 var no_of_session_call = 0;
@@ -128,7 +128,7 @@ router.post("/signUp", async (req, res) => {
       return;
     }
     let user;
-    const { publicKey, privateKey } = await generateKeyPair();
+    const { publicKey, privateKey } = await MyGenerateKeyPair();
     try {
       user = await User.create({
         name: username,

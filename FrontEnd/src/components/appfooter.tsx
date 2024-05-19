@@ -24,7 +24,7 @@ function checkAndSetTheme(dispatch: AppDispatch, isChecked: boolean) {
 function ModeBtn() {
   //isChecked == darkmode
   const dispatch = useAppDispatch();
-  let data = useRef<Session | null>(null);
+  let data;
   const [isChecked, setIsChecked] = useState(false);
   const preferredThemeDark = useAppSelector((state: any) => {
     return state.theme.darkMode;
@@ -33,8 +33,7 @@ function ModeBtn() {
   useEffect(() => {
     setIsChecked(preferredThemeDark);
     const fetchData = async () => {
-      console.log("Current pass:", myPass);
-      data.current = await getSession();
+      data = await getSession();
     };
     fetchData();
     const interval = setInterval(fetchData, 5 * 60 * 1000); // Fetch data every 5 minutes
