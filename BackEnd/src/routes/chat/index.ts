@@ -23,8 +23,7 @@ router.post("/getChats", async (req, res) => {
       console.log("password no match");
       return;
     }
-    const toSend: ChatMenuItemInterface[] = await getChats(user._id);
-    console.log("Send chat list of user:", name);
+    const toSend: ChatMenuItemInterface[] = await getChats(user._id.toString());
     res.json(toSend);
   } catch (error: any) {
     console.error(error.message);
@@ -44,7 +43,7 @@ router.post("/getMessagesAll", async (req, res) => {
     }
     if (private_key != user.private_key) {
       res.status(500).send("Nope password no match");
-      console.log("password no match");
+
       return;
     }
     const toSend = await getMessagesAll(user._id, chatId);

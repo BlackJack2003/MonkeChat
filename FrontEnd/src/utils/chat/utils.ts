@@ -5,28 +5,22 @@ import {
   ChatMenuItemInterface,
   ChatPanelInterface,
 } from "../../app/(chat)/chat/interfaces";
-
-// export const getPanel: (
-//   userName: string,
-//   ChatId: string | undefined
-// ) => ChatPanelInterface = function (userName: string) {
-//   try {
-//     return {
-//       userName: userName,
-//     };
-//   } catch (e: any) {
-//     console.error(e.message);
-//     return {};
-//   }
-// };
+import {
+  decryptData,
+  decryptWithPrivateKey,
+  encryptData,
+} from "../general/general";
 
 export const getChats: (
-  session: Session | null
-) => Promise<ChatMenuItemInterface[]> = async function (session) {
+  name: string,
+  private_key: string,
+  password: string
+) => Promise<ChatMenuItemInterface[]> = async function (
+  name,
+  private_key,
+  password
+) {
   try {
-    if (session == null) return [];
-    const data = session.user;
-    var { name, private_key } = data;
     var resp = await fetch("/backEndApi/chat/getChats", {
       method: "POST",
       headers: {
@@ -37,35 +31,62 @@ export const getChats: (
         private_key,
       }),
     });
+
     var toRet: ChatMenuItemInterface[] = await resp.json();
+
+    var decPrikey = decryptData(password, private_key);
+    toRet.forEach((item, index) => {
+      toRet[index].encKey = decryptWithPrivateKey(decPrikey, item.encKey);
+    });
     return toRet;
   } catch (e: any) {
-    console.error(e.message);
+    console.error("Get chat error:\n", e.message);
     return [];
   }
 };
 
 export const getMessagesAll: (
-  session: Session | null,
   userName: string | null,
-  chatId: string | undefined
-) => Promise<MessageInterface[]> = async function (session, userName, chatId) {
+  chatId: string | undefined,
+  private_key: string,
+  password: string,
+  encKey: string
+) => Promise<MessageInterface[]> = async function (
+  userName,
+  chatId,
+  private_key,
+  password,
+  encKey
+) {
   try {
-    if (session == null || userName == null || chatId == undefined) return [];
-    const data = session.user;
-    var { name, private_key } = data;
+    if (
+      userName == null ||
+      chatId == undefined ||
+      private_key == undefined ||
+      password == undefined ||
+      encKey == undefined
+    ) {
+      console.log(
+        `UserName: ${userName}, ChatId: ${chatId}, PrivateKey: ${private_key},encKey:${encKey}`
+      );
+      return [];
+    }
+
     var resp = await fetch("/backEndApi/chat/getMessagesAll", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
-        private_key,
-        chatId,
+        name: userName,
+        private_key: private_key,
+        chatId: chatId,
       }),
     });
-    const r = await resp.json();
+    const r: MessageInterface[] = await resp.json();
+    r.forEach((item, index) => {
+      r[index].text = decryptData(encKey, item.text || "");
+    });
     console.log("Got messages:", r);
     return r;
   } catch (e: any) {
@@ -75,32 +96,33 @@ export const getMessagesAll: (
 };
 
 export const sendMessage: (
-  session: Session | null,
   userName: string | null,
+  private_key: string | null,
   message: string,
-  chatId: string | undefined
+  chatId: string | undefined,
+  encKey: string
 ) => Promise<boolean> = async function (
-  session,
   userName,
+  private_key,
   message,
-  chatId
+  chatId,
+  encKey
 ): Promise<boolean> {
   try {
-    if (session == null || userName == null || chatId == undefined)
+    if (private_key == null || userName == null || chatId == undefined)
       return false;
-    const data = session.user;
-    var { name, private_key } = data;
-    //name, private_key, chatId, text
+
+    console.log("Sending message:", message);
     var resp = await fetch("/backEndApi/chat/sendMessage", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: name,
+        name: userName,
         private_key: private_key,
         chatId: chatId,
-        text: message,
+        text: encryptData(encKey, message),
       }),
     });
     if (resp.ok) return true;
@@ -110,4 +132,3 @@ export const sendMessage: (
     return false;
   }
 };
-// export const sendMessage:(session:Session)=>void=function

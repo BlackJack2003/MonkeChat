@@ -32,7 +32,7 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
     iSrc = imgSrc;
   }
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -43,7 +43,8 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
   };
 
   const handleClickOutside = (event: Event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const target = event.target as Node;
+    if (dropdownRef.current && !dropdownRef.current.contains(target)) {
       closeDropdown();
     }
   };
@@ -76,21 +77,18 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 const SignInOrLogo: React.FC = () => {
   //   const { status, data } = useSession();
   const data = useAppSelector((s) => s.session);
-  //   const {
-  //     name = undefined,
-  //     email = undefined,
-  //     image = undefined,
-  //   }: {
-  //     name?: string | null;
-  //     email?: string | null;
-  //     image?: string | null;
-  //   } = data?.user || {};
-  var image = useAppSelector((s) => s.session.image);
-  var email = useAppSelector((s) => s.session.email);
-  var name = useAppSelector((s) => s.session.username);
+  var image = useRef("");
+  var email = useRef("");
+  var name = useRef();
+  useEffect(() => {
+    image.current = data.image;
+    email.current = data.email;
+    name.current = data.username;
+    return () => {};
+  }, [data]);
   var x =
-    name != "" || name != null ? (
-      <ProfImg imgSrc={image} />
+    name.current != "" && name.current != null ? (
+      <ProfImg imgSrc={image.current} />
     ) : (
       <div className="flex align-baseline">
         <SignBtn

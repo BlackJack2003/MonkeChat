@@ -9,8 +9,7 @@ export interface ChatMenuItemInterface {
   updateAt: string;
   isActive?: boolean;
   ChatId: string;
-  private_key: string;
-  public_key: string;
+  encKey: string;
 }
 
 export async function getChats(
@@ -22,30 +21,38 @@ export async function getChats(
     for (let i = 0; i < user.contacts.length; i++) {
       const userB = await User.findById(user.contacts[i].cid);
       const chat = await Chat.findById(user.contacts[i].chat);
-      const userChatPrivateKey = chat.people.find(
-        (p: any) => String(p.pid) === userId
-      )?.priKey;
+      var userChatPrivateKey = "";
+      chat.people.forEach((item: any, index: number) => {
+        if (item.pid.toString() == userId) {
+          console.log(
+            "The encKey for user:" + userB.name + " is: " + item.encKey
+          );
+          userChatPrivateKey = item.encKey;
+        }
+      });
+      if (userChatPrivateKey == "") {
+        console.log("User:" + userB.name + " not found in chat");
+        return [];
+      }
       rl.push({
         Name: userB.name,
         Img: userB.image,
-        ChatId: chat._id,
+        ChatId: chat._id.toString(),
         updateAt: chat.updatedAt,
-        public_key: chat.public_key,
-        private_key: userChatPrivateKey,
+        encKey: userChatPrivateKey,
       });
     }
     for (let i = 0; i < user.groupChats.length; i++) {
       const chatB = await Chat.findById(user.contacts[i].chat);
       const userChatPrivateKey = chatB.people.find(
         (p: any) => String(p.pid) === userId
-      )?.priKey;
+      )?.encKey;
       rl.push({
         Name: chatB.name,
         Img: chatB.image,
         ChatId: chatB._id,
         lastMsg: chatB.updatedAt,
-        public_key: chatB.public_key,
-        private_key: userChatPrivateKey,
+        encKey: userChatPrivateKey,
         updateAt: chatB.updatedAt,
       });
     }

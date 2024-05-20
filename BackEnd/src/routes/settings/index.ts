@@ -10,7 +10,7 @@ router.get("/*", async (req, res) => {
 router.post("/changePassword", async (req, res) => {
   try {
     const b = req.body;
-    const { accountName, oldpassword, newpassword } = b;
+    const { accountName, oldpassword, newpassword, newPrivateKey } = b;
     var user = await User.findOne({ name: accountName });
     if (user == null || user.password != oldpassword) {
       console.log(`User:${accountName} not found`);
@@ -18,6 +18,7 @@ router.post("/changePassword", async (req, res) => {
       return;
     }
     user.password = newpassword;
+    user.private_key = newPrivateKey;
     await user.save();
     console.log("User:" + accountName + "'s password changed");
     res.send("Done");

@@ -9,7 +9,7 @@ import type {
   InferGetServerSidePropsType,
 } from "next";
 import options from "../app/api/auth/[...nextauth]/options";
-import { hashString } from "@/utils/genral/genral";
+import { MyGenerateKeyPair, hashString } from "@/utils/general/general";
 import imageCompression from "browser-image-compression";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -261,11 +261,14 @@ export const Signup: React.FC<any> = ({
                   className="flex w-full justify-center rounded-xl bg-stone-500 text-black dark:text-white dark:bg-slate-600  px-3 py-1.5 text-sm font-semibold leading-6  shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   onClick={async (e) => {
                     e.preventDefault();
+                    const { publicKey, privateKey } = await MyGenerateKeyPair();
                     const toSend = {
                       username: userName.current,
                       password: hashString(pass.current),
                       img: imgString.current,
                       email: userEmail.current,
+                      publicKey: publicKey,
+                      privateKey: privateKey,
                     };
                     var resp = await fetch("/backEndApi/login/signUp", {
                       method: "POST",

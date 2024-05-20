@@ -22,6 +22,12 @@ import {
 } from "../../../utils/chat/utils";
 import { useSession, SessionProvider, getSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { useAppSelector } from "@/redux/hooks/hooks";
+import {
+  decryptData,
+  decryptWithPrivateKey,
+  encryptData,
+} from "@/utils/general/general";
 
 const ChatPanelContext = createContext<{
   panel: ChatPanelInterface;
@@ -91,6 +97,7 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
   lastMsg = "",
   isActive = false,
   ChatId,
+  encKey,
   updateAt = "0",
 }) => {
   const imgSize = 48;
@@ -114,7 +121,7 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
       }
       onClick={(e) => {
         // setPanel(getPanel(Name, ChatId));
-        setPanel({ userName: Name, ChatId: ChatId });
+        setPanel({ userName: Name, ChatId: ChatId, encKey: encKey });
       }}
     >
       <img
@@ -139,12 +146,16 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
 const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const searchVal = useRef<string>("");
   var { data } = useSession();
+  var password = useAppSelector((s) => s.session.password);
   const [update, setupdate] = useState(false);
   var list = useRef<ChatMenuItemInterface[]>([]);
   useEffect(() => {
     const _ = async () => {
-      list.current = await getChats(data);
-      console.log("Chats", list.current);
+      list.current = await getChats(
+        data?.user.name,
+        data?.user.private_key,
+        password
+      );
       list.current.sort(function (a, b) {
         var x = Date.parse(a.updateAt) || 0;
         var y = Date.parse(b.updateAt) || 0;
@@ -201,22 +212,48 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
   status = false,
   children,
   ChatId,
+  encKey,
 }) => {
-  const { data } = useSession();
   const [update, doUpdate] = useState(0);
   const myMessages = useRef<MessageInterface[]>([]);
   var interval = useRef<NodeJS.Timeout>();
   var inputEle = useRef<null | HTMLInputElement>(null);
+  var session = useAppSelector((s) => s.session);
+  var realEncKey: string = encKey || "";
+
   useEffect(() => {
+    console.log(
+      "Da session password:",
+      session.password,
+      "\nChat encKey:",
+      encKey
+    );
+    // if (session.password != undefined && encKey != undefined) {
+    //   var decPrikey = decryptData(session.password, session.private_key);
+    //   console.log(
+    //     "Private key:",
+    //     decPrikey,
+    //     "\nattempting to decrypt:",
+    //     encKey
+    //   );
+    //   realEncKey = decryptWithPrivateKey(decPrikey, encKey);
+    //   console.log("Chat password:", realEncKey);
+    // }
     const _ = async () => {
-      myMessages.current = await getMessagesAll(data, userName, ChatId);
-      console.log();
+      if (ChatId != null && realEncKey != undefined)
+        myMessages.current = await getMessagesAll(
+          session.username,
+          ChatId,
+          session.private_key,
+          session.password,
+          realEncKey
+        );
       doUpdate(update - 1);
     };
     _();
 
     return () => {};
-  }, [data, userName]);
+  }, [session, encKey]);
   const sendMsg = async () => {
     const textEle = document.getElementById(
       "msgBox"
@@ -228,14 +265,28 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
       return;
     }
 
-    var _ = await sendMessage(data, userName, text, ChatId);
-    myMessages.current = await getMessagesAll(data, userName, ChatId); //;
+    var _ = await sendMessage(
+      session.username,
+      session.private_key,
+      text,
+      ChatId,
+      realEncKey
+    );
+    if (encKey != undefined)
+      myMessages.current = await getMessagesAll(
+        session.username,
+        ChatId,
+        session.private_key,
+        session.password,
+        realEncKey
+      );
+    console.log(myMessages.current);
     if (textEle?.value) textEle.value = "";
     doUpdate(update + 1);
   };
-  const handleKeyDown = (event: any) => {
+  const handleKeyDown = async (event: any) => {
     if (event.key === "Enter") {
-      sendMsg().then((x) => {});
+      await sendMsg();
     }
   };
 
@@ -255,7 +306,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
     }
   });
 
-  if (data == null || userName == null) return <></>;
+  if (userName == null) return <></>;
 
   return (
     <div className="h-screen flex-grow flex-shrink resize-x">

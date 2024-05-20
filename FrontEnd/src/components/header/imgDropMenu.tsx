@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import { signOut } from "next-auth/react";
+import { useAppDispatch } from "@/redux/hooks/hooks";
+import { setSignOut } from "@/redux/actions/sessionAction";
 
 const ImgDropMenuItem: React.FC<{ href?: string; val: string }> = ({
   href = "#",
@@ -18,6 +20,7 @@ const ImgDropMenuItem: React.FC<{ href?: string; val: string }> = ({
 };
 
 const ImgDropMenu: React.FC = () => {
+  const dispatch = useAppDispatch();
   return (
     <div
       id="dropdown"
@@ -31,7 +34,10 @@ const ImgDropMenu: React.FC = () => {
         <ImgDropMenuItem href="/settings" val="Settings" />
         <li>
           <div
-            onClick={() => signOut()}
+            onClick={() => {
+              dispatch(setSignOut());
+              signOut();
+            }}
             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
           >
             Sign out

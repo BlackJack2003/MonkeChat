@@ -6,8 +6,7 @@ export interface ChatMenuItemInterface {
   updateAt: string;
   isActive?: boolean;
   ChatId: string;
-  private_key: string;
-  public_key: string;
+  encKey: string;
 }
 
 export interface MessageInterface {
@@ -23,4 +22,5 @@ export interface ChatPanelInterface {
   children?: React.ReactNode;
   messages?: MessageInterface[];
   ChatId?: string;
+  encKey?: string;
 }

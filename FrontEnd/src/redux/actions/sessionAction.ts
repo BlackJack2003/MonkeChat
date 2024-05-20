@@ -19,6 +19,7 @@ export enum SessionActionTypes {
   SET_PRIVATE_KEY = "SET_PRIVATE_KEY",
   SET_SESSION = "SET_SESSION",
   SET_EMAIL = "SET_EMAIL",
+  SIGN_OUT = "SIGN_OUT",
 }
 
 // Define action creators
@@ -55,4 +56,8 @@ export const setEmail = (payload: string) => ({
 export const setSession = (payload: sessionInterface) => ({
   type: SessionActionTypes.SET_SESSION,
   payload: payload,
+});
+
+export const setSignOut = () => ({
+  type: SessionActionTypes.SIGN_OUT,
 });

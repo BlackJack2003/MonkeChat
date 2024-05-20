@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { hashString } from "@/utils/genral/genral";
+import { decryptData, encryptData, hashString } from "@/utils/general/general";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { setSignOut } from "@/redux/actions/sessionAction";
 
 const DelMenu: React.FC<{ username: string }> = ({ username }) => {
   const password = useRef("");
@@ -12,6 +14,7 @@ const DelMenu: React.FC<{ username: string }> = ({ username }) => {
     if (inputEle) inputEle.value = password.current;
     return () => {};
   }, []);
+  const dispatch = useAppDispatch();
   return (
     <div>
       <form action="/backEndApi/deleteAccount" method="POST">
@@ -47,6 +50,7 @@ const DelMenu: React.FC<{ username: string }> = ({ username }) => {
                 password: hashString(password.current),
               }),
             });
+            dispatch(setSignOut());
             signOut();
           }}
         >
@@ -77,6 +81,7 @@ const AccountSection: React.FC = () => {
   var oldPass = useRef("");
   var newPass = useRef("");
   const [ShowPass, setShowPass] = useState(false);
+  var selSession = useAppSelector((s) => s.session);
   if (name.current == null || name.current == undefined) return <></>;
   return (
     <>
@@ -177,6 +182,10 @@ const AccountSection: React.FC = () => {
               accountName: name.current,
               oldpassword: hashString(oldPass.current),
               newpassword: hashString(newPass.current),
+              newPrivateKey: encryptData(
+                newPass.current,
+                decryptData(selSession.password, selSession.private_key)
+              ),
             }),
           });
           if (res.ok) signOut();

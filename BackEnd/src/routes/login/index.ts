@@ -103,7 +103,7 @@ router.post("/getMail", async (req, res) => {
 router.post("/signUp", async (req, res) => {
   try {
     const b = req.body;
-    var { username, password, img, email } = b;
+    var { username, password, img, email, publicKey, privateKey } = b;
     var [ename, domain] = email.split("@");
     var dbMail = await Email.findOne({ username: ename, domain: domain });
     if (dbMail != null) {
@@ -128,7 +128,7 @@ router.post("/signUp", async (req, res) => {
       return;
     }
     let user;
-    const { publicKey, privateKey } = await MyGenerateKeyPair();
+    // const { publicKey, privateKey } = await MyGenerateKeyPair();
     try {
       user = await User.create({
         name: username,
@@ -166,12 +166,6 @@ router.post("/sessionUserData", async (req, res) => {
         ++no_of_session_call
     );
     if (serverPassword != process.env.BACKEND_KEY) {
-      console.error(
-        "Env keys not matching check key or prepare for attack\nWanted:" +
-          process.env.BACKEND_KEY +
-          "\nGot:" +
-          serverPassword
-      );
       res.status(400).send("Nope password");
       return;
     }

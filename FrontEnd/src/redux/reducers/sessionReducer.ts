@@ -45,6 +45,13 @@ const sessionReducer = (state = initialState, action: any) => {
     case SessionActionTypes.SET_SESSION:
       var rv: sessionInterface = action.payload;
       return rv;
+    case SessionActionTypes.SET_EMAIL:
+      return {
+        ...state,
+        email: action.payload,
+      };
+    case SessionActionTypes.SIGN_OUT:
+      return initialState;
     default:
       return state;
   }

@@ -16,10 +16,11 @@ const loadState = () => {
 
     // De-serialise the saved state, and return it.
     return JSON.parse(serialisedState);
-  } catch (err) {
+  } catch (err: any) {
     // Return undefined if localStorage is not available,
     // or data could not be de-serialised,
     // or there was some other error
+    console.error(err);
     return undefined;
   }
 };
@@ -31,8 +32,9 @@ const saveState = (state: any) => {
 
     // Save the serialised state to localStorage against the key 'app_state'
     window.localStorage.setItem("app_state", serialisedState);
-  } catch (err) {
+  } catch (err: any) {
     // Log errors here, or ignore
+    console.error(err);
   }
 };
 
@@ -49,15 +51,15 @@ export default function StoreProvider({
   if (!storeRef.current) {
     storeRef.current = makeStore();
     const oldState = loadState();
-    console.log("old state: " + JSON.stringify(oldState));
     if (oldState != undefined && oldState.theme.darkMode) {
       storeRef.current.dispatch(setThemeDark());
     } else {
       storeRef.current.dispatch(setThemeLight());
     }
-    if (oldState.session && oldState.session.password) {
-      storeRef.current.dispatch(setSession(oldState.session));
-    }
+    if (oldState != undefined)
+      if (oldState.session && oldState.session.password) {
+        storeRef.current.dispatch(setSession(oldState.session));
+      }
     storeRef.current.subscribe(() => saveState(storeRef.current!.getState()));
   }
 

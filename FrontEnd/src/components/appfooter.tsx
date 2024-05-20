@@ -6,6 +6,13 @@ import { AppDispatch } from "../redux/store/nstore";
 import { _Footer } from "./footer";
 import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
+import {
+  setEmail,
+  setImage,
+  setPrivateKey,
+  setPublicKey,
+  setUsername,
+} from "@/redux/actions/sessionAction";
 
 function checkAndSetTheme(dispatch: AppDispatch, isChecked: boolean) {
   var root = document.getElementById("myRoot");
@@ -24,7 +31,7 @@ function checkAndSetTheme(dispatch: AppDispatch, isChecked: boolean) {
 function ModeBtn() {
   //isChecked == darkmode
   const dispatch = useAppDispatch();
-  let data;
+  const dataRef = useRef<Session | null>();
   const [isChecked, setIsChecked] = useState(false);
   const preferredThemeDark = useAppSelector((state: any) => {
     return state.theme.darkMode;
@@ -33,7 +40,17 @@ function ModeBtn() {
   useEffect(() => {
     setIsChecked(preferredThemeDark);
     const fetchData = async () => {
-      data = await getSession();
+      dataRef.current = await getSession();
+
+      if (dataRef.current != null) {
+        dispatch(setUsername(dataRef.current.user.name));
+        dispatch(setEmail(dataRef.current.user.email));
+        dispatch(setImage(dataRef.current.user.image));
+        if (dataRef.current.user.pulic_key)
+          dispatch(setPublicKey(dataRef.current.user.public_key));
+        if (dataRef.current.user.private_key)
+          dispatch(setPrivateKey(dataRef.current.user.private_key));
+      }
     };
     fetchData();
     const interval = setInterval(fetchData, 5 * 60 * 1000); // Fetch data every 5 minutes

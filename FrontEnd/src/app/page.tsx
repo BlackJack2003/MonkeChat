@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getProviders, getSession, signIn } from "next-auth/react";
 import ErrorBox from "@/components/errorBox";
-import { hashString } from "@/utils/genral/genral";
+import { hashString } from "@/utils/general/general";
 import Footer from "@/components/appfooter";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { setPassword } from "@/redux/actions/sessionAction";

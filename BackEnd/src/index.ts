@@ -105,6 +105,7 @@ export async function setDefaultUsers() {
     console.log("Successfully deleted db");
     for (const user of usersToCreate) {
       const { publicKey, privateKey } = await MyGenerateKeyPair();
+
       const email = await Email.create({
         username: user.email.username,
         domain: user.email.domain,
@@ -115,15 +116,15 @@ export async function setDefaultUsers() {
         password: hashString(user.password),
         email: email._id,
         public_key: publicKey,
-        private_key: encryptData(user.password, privateKey),
+        private_key: await encryptData(user.password, privateKey),
       });
 
       let nu = await User.findOne({ name: user.name });
       _ids.push(nu._id);
     }
     return "Done";
-  } catch (error: any) {
-    throw new Error("Failed to insert default user or email: " + error.message);
+  } catch (e: any) {
+    console.error("Insert user fail due to:\n", e, "\n", e.message);
   }
 }
 
@@ -139,16 +140,11 @@ export async function updateUserContacts() {
         let a1 = await User.findById(itemId);
         let a2 = await User.findById(_ids[i + 1]);
         await addContact(a1.name, a2.name);
-        // contacts.map(async (x) => {
-
-        // });
-        // u.contacts = contacts;
-        // await u.save();
         console.log("Successfully added contacts for user:", u.name);
       }
     }
-  } catch (error: any) {
-    throw new Error("Failed to update user contacts: " + error.message);
+  } catch (e: any) {
+    console.error("update user contact fail due to:\n", e, "\n", e.message);
   }
 }
 
