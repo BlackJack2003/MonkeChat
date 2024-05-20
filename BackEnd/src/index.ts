@@ -16,7 +16,7 @@ const chatRouter = require("./routes/chat/index");
 
 const app = express();
 
-const dbAddr: string = "mongodb://127.0.0.1:27017/monkeChatDb1";
+const dbAddr: string = "mongodb://127.0.0.1:27017/monkeChatDb";
 
 interface Email {
   username: string;
