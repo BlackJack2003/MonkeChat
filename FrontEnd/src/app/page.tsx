@@ -1,4 +1,3 @@
-// No changes needed, the provided code appears to be correct and functional
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import "@/styles/globals.css";

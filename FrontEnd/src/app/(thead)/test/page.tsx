@@ -13,6 +13,7 @@ const page = () => {
           marginLeft: "200px",
         }}
         width={200}
+        height={300}
       >
         <div className="min-w-[200px] h-28 bg-gray-700">1</div>
         <div className="min-w-[200px] h-28 bg-gray-700">2</div>

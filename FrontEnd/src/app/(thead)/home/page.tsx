@@ -5,7 +5,11 @@ import Carousel from "@/components/generic/Carousel";
 const Home = () => {
   var h = 500;
   var w = 400;
-  var car1ImgStyle = { width: w, height: h, objectFit: "fill" };
+  var car1ImgStyle: React.CSSProperties = {
+    width: w,
+    height: h,
+    objectFit: "fill",
+  };
   return (
     <div>
       <section

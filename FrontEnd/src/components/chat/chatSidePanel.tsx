@@ -24,8 +24,10 @@ const ChatNavSmallComponent: React.FC<{ imgSrc: string; href: string }> = ({
 };
 
 const ChatNavSidePanel: React.FC = async () => {
-  const session: Session = await getServerSession(options).then((x) => x);
-
+  const session: Session | null = await getServerSession(options).then(
+    (x) => x
+  );
+  if (session == null) return <></>;
   const iSrc = (session.user?.image as string) || "/def_user.jpg";
   const size = 50;
   return (

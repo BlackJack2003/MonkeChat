@@ -86,7 +86,7 @@ const SettingSidePanel: React.FC = () => {
   );
 };
 
-export const Setting = () => {
+const Setting: React.FC = () => {
   const [selected, setSelected] = useState<MenuItems>(MenuItems.noItems);
   const sessionRef = useRef<Session | null>(null);
   useEffect(() => {
