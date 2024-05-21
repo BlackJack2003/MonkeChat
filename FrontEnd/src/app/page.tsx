@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     const _ = async () => {
       const session = await getSession();
-      if (session && typeof window != undefined) {
+      if (session && window != undefined) {
         window.location.href = "home";
       }
     };
@@ -47,7 +47,6 @@ const LoginPage: React.FC = () => {
   const userName = useRef("");
   const pass = useRef("");
   const dispatch = useAppDispatch();
-  var ting: string = useAppSelector((s) => s.session.password);
   return (
     <>
       <div
@@ -150,16 +149,17 @@ const LoginPage: React.FC = () => {
                     });
                     if (resp.ok) {
                       console.log("Dispatching setPassword");
-                      if (typeof window != undefined) {
-                        var oldS: any =
-                          window.localStorage.getItem("app_state");
-                        oldS = JSON.parse(oldS || "");
-                        if (oldS.session != undefined) {
-                          oldS.session.password = pass.current;
-                        }
-                        oldS = JSON.stringify(oldS);
-                        window.localStorage.setItem("app_state", oldS);
-                      }
+                      dispatch(setPassword(pass.current));
+                      //   if (typeof window !== undefined && window != undefined) {
+                      //     var oldS: any =
+                      //       window.localStorage.getItem("app_state");
+                      //     oldS = JSON.parse(oldS || "");
+                      //     if (oldS.session != undefined) {
+                      //       oldS.session.password = pass.current;
+                      //     }
+                      //     oldS = JSON.stringify(oldS);
+                      //     window.localStorage.setItem("app_state", oldS);
+                      //   }
                       signIn("credentials", {
                         username: userName.current,
                         password: hashString(pass.current),

@@ -8,14 +8,17 @@ import { setSession } from "../actions/sessionAction";
 const loadState = () => {
   try {
     // Load the data saved in localStorage, against the key 'app_state'
-    const serialisedState = window.localStorage.getItem("app_state");
+    if (typeof window !== undefined && window !== undefined) {
+      const serialisedState = window.localStorage.getItem("app_state");
 
-    // Passing undefined to createStore will result in our app getting the default state
-    // If no data is saved, return undefined
-    if (!serialisedState) return undefined;
+      // Passing undefined to createStore will result in our app getting the default state
+      // If no data is saved, return undefined
+      if (!serialisedState) return undefined;
 
-    // De-serialise the saved state, and return it.
-    return JSON.parse(serialisedState);
+      // De-serialise the saved state, and return it.
+      return JSON.parse(serialisedState);
+    }
+    return undefined;
   } catch (err: any) {
     // Return undefined if localStorage is not available,
     // or data could not be de-serialised,
@@ -31,7 +34,7 @@ const saveState = (state: any) => {
     const serialisedState = JSON.stringify(state);
 
     // Save the serialised state to localStorage against the key 'app_state'
-    if (window != undefined)
+    if (typeof window !== undefined)
       window.localStorage.setItem("app_state", serialisedState);
   } catch (err: any) {
     // Log errors here, or ignore

@@ -40,6 +40,7 @@ function ModeBtn() {
   useEffect(() => {
     setIsChecked(preferredThemeDark);
     const fetchData = async () => {
+      console.log("maPass:", myPass);
       dataRef.current = await getSession();
 
       if (dataRef.current != null) {
