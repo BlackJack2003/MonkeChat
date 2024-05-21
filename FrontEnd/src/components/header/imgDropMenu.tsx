@@ -30,7 +30,7 @@ const ImgDropMenu: React.FC = () => {
         className="py-2 text-sm text-gray-700 dark:text-gray-200"
         aria-labelledby="dropdownDefaultButton"
       >
-        <ImgDropMenuItem href="#" val="Dashboard" />
+        <ImgDropMenuItem href="/home" val="Home" />
         <ImgDropMenuItem href="/settings" val="Settings" />
         <li>
           <div
