@@ -73,7 +73,6 @@ export async function getMessagesAll(
 ): Promise<MessageInterface[]> {
   try {
     var chat = await Chat.findById(ChatID);
-    console.log("Getting messages for user:" + userId);
     if (chat == null) {
       console.log(
         "No chat found with id:" +
