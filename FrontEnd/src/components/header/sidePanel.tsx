@@ -40,7 +40,7 @@ const SidePanel = () => {
 const SidePanelButton: React.FC = () => {
   const btnSize = 30;
   const [isOpen, setIsOpen] = useState(false);
-  const sidePanelRef = useRef(null);
+  const sidePanelRef = useRef<HTMLDivElement>(null);
 
   const toggleSidePanel = () => {
     setIsOpen(!isOpen);
@@ -51,7 +51,10 @@ const SidePanelButton: React.FC = () => {
   };
 
   const handleClickOutside = (event: Event) => {
-    if (sidePanelRef.current && !sidePanelRef.current.contains(event.target)) {
+    if (
+      sidePanelRef.current &&
+      !sidePanelRef.current.contains(event.target as Node)
+    ) {
       closeSidePanel();
     }
   };

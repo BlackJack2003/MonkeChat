@@ -50,6 +50,11 @@ router.post("/addContact", async (req, res) => {
       console.log("User:" + name + " not found");
       return;
     }
+    if (user == user_to_add) {
+      res.status(500).send("Nope");
+      console.log("User:" + name + " adding self found");
+      return;
+    }
     if (private_key != user.private_key) {
       res.status(500).send("Nope password no match");
       console.log("password no match");
