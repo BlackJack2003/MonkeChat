@@ -152,13 +152,16 @@ const LoginPage: React.FC = () => {
                     });
                     if (resp.ok) {
                       console.log("Dispatching setPassword");
-                      var oldS: any = window.localStorage.getItem("app_state");
-                      oldS = JSON.parse(oldS || "");
-                      if (oldS.session != undefined) {
-                        oldS.session.password = pass.current;
+                      if (window != undefined) {
+                        var oldS: any =
+                          window.localStorage.getItem("app_state");
+                        oldS = JSON.parse(oldS || "");
+                        if (oldS.session != undefined) {
+                          oldS.session.password = pass.current;
+                        }
+                        oldS = JSON.stringify(oldS);
+                        window.localStorage.setItem("app_state", oldS);
                       }
-                      oldS = JSON.stringify(oldS);
-                      window.localStorage.setItem("app_state", oldS);
                       signIn("credentials", {
                         username: userName.current,
                         password: hashString(pass.current),

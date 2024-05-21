@@ -94,12 +94,14 @@ const SignInOrLogo: React.FC = () => {
         <SignBtn
           val="Sign in"
           onC={() => {
-            window.location.href = "/";
+            if (window != undefined) window.location.href = "/";
           }}
         />
         <SignBtn
           val="Sign Up"
-          onC={() => (window.location.href = "/signup")}
+          onC={() => {
+            if (window != undefined) window.location.href = "/signup";
+          }}
         ></SignBtn>
       </div>
     );

@@ -10,7 +10,9 @@ const SidePanelItem: React.FC<{ href: string; src: string; text?: string }> = ({
   return (
     <div
       className="w-full flex justify-center cursor-pointer p-4 py-6 hover:bg-slate-200 hover:text-black [&>*]:dark:hover:invert-0 [&>*]:dark:hover:sepia"
-      onClick={() => (window.location.href = href)}
+      onClick={() => {
+        if (window != undefined) window.location.href = href;
+      }}
     >
       <Image
         src={src}

@@ -43,11 +43,15 @@ const Header: React.FC = () => {
               <SidePanelButton />
               <HeaderLeftItems
                 text="Feature's"
-                func={() => (window.location.href = "#")}
+                func={() => {
+                  if (window != undefined) window.location.href = "#";
+                }}
               />
               <HeaderLeftItems
                 text="Chat's"
-                func={() => (window.location.href = "/chat")}
+                func={() => {
+                  if (window != undefined) window.location.href = "/chat";
+                }}
               />
             </div>
             <div className="lg:absolute lg:-translate-x-1/2 lg:inset-y-5 lg:left-1/2">
