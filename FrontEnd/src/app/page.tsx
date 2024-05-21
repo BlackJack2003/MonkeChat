@@ -2,18 +2,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
-import { getProviders, getSession, signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { getSession, signIn } from "next-auth/react";
 import ErrorBox from "@/components/errorBox";
 import { hashString } from "@/utils/general/general";
-import Footer from "@/components/appfooter";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { setPassword } from "@/redux/actions/sessionAction";
 
 const LoginPage: React.FC = () => {
-  const providers = useRef<Awaited<ReturnType<typeof getProviders>> | null>(
-    null
-  );
+  //   const providers = useRef<Awaited<ReturnType<typeof getProviders>> | null>(
+  //     null
+  //   );
   const errorMsg = useRef<string | string[]>("");
   const [update, setupdate] = useState(false);
 
@@ -32,7 +31,7 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     const _ = async () => {
       const session = await getSession();
-      if (session) {
+      if (session && typeof window != undefined) {
         window.location.href = "home";
       }
     };
@@ -151,7 +150,7 @@ const LoginPage: React.FC = () => {
                     });
                     if (resp.ok) {
                       console.log("Dispatching setPassword");
-                      if (window != undefined) {
+                      if (typeof window != undefined) {
                         var oldS: any =
                           window.localStorage.getItem("app_state");
                         oldS = JSON.parse(oldS || "");
@@ -186,7 +185,6 @@ const LoginPage: React.FC = () => {
               </a>
             </div>
             <div className="h-5"></div>
-            {/* <ProviderList providers={providers.current} update={update} />{" "} */}
           </div>{" "}
         </div>
       </div>{" "}

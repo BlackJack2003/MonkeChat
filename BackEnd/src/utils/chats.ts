@@ -20,13 +20,11 @@ export async function getChats(
     var rl: ChatMenuItemInterface[] = [];
     for (let i = 0; i < user.contacts.length; i++) {
       const userB = await User.findById(user.contacts[i].cid);
+      if (userB == null) continue;
       const chat = await Chat.findById(user.contacts[i].chat);
       var userChatPrivateKey = "";
       chat.people.forEach((item: any, index: number) => {
         if (item.pid.toString() == userId) {
-          console.log(
-            "The encKey for user:" + userB.name + " is: " + item.encKey
-          );
           userChatPrivateKey = item.encKey;
         }
       });
