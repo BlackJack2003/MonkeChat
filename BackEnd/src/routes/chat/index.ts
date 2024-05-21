@@ -47,7 +47,6 @@ router.post("/getMessagesAll", async (req, res) => {
       return;
     }
     const toSend = await getMessagesAll(user._id, chatId);
-    console.log("sending messages for user:" + name);
     res.json(toSend);
   } catch (e: any) {
     console.error(e.message);
@@ -60,7 +59,6 @@ router.post("/sendMessage", async (req, res) => {
     const b = req.body;
 
     const { name, private_key, chatId, text } = b;
-    console.log("Sending message:", b);
     const user = await User.findOne({ name: name });
     if (user == null || user == undefined) {
       res.status(500).send("Nope");

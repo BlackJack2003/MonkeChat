@@ -34,7 +34,7 @@ const saveState = (state: any) => {
     const serialisedState = JSON.stringify(state);
 
     // Save the serialised state to localStorage against the key 'app_state'
-    if (typeof window !== undefined)
+    if (typeof window !== undefined && window != undefined)
       window.localStorage.setItem("app_state", serialisedState);
   } catch (err: any) {
     // Log errors here, or ignore

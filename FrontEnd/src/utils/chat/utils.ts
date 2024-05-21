@@ -112,7 +112,6 @@ export const sendMessage: (
     if (private_key == null || userName == null || chatId == undefined)
       return false;
 
-    console.log("Sending message:", message);
     var resp = await fetch("/backEndApi/chat/sendMessage", {
       method: "POST",
       headers: {

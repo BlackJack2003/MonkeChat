@@ -64,7 +64,7 @@ router.post("/validate", async (req, res) => {
       search = await User.findOne({ name: username }).populate("email");
     }
     if (search == null || search.password !== password) {
-      res.status(300).send(null);
+      res.status(300).send("Invalid Credentials");
       console.log("failed to validate:" + username);
       return;
     }
