@@ -39,3 +39,7 @@ BackEnd/node_modules/*
 #compiled
 BackEnd/dist
 BackEnd/.env.local
+
+nginx_logs/*
+ssl_certs/private_nginx-selfsigned.key
+ssl_certs/public_nginx-selfsigned.crt
