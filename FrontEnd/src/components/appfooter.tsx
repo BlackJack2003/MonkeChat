@@ -4,13 +4,15 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { setThemeDark, setThemeLight } from "../redux/actions/themeAction";
 import { AppDispatch } from "../redux/store/nstore";
 import { _Footer } from "./footer";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import {
   setEmail,
   setImage,
   setPrivateKey,
   setPublicKey,
+  setSession,
+  setSignOut,
   setUsername,
 } from "@/redux/actions/sessionAction";
 
@@ -51,6 +53,9 @@ function ModeBtn() {
           dispatch(setPublicKey(dataRef.current.user.public_key));
         if (dataRef.current.user.private_key)
           dispatch(setPrivateKey(dataRef.current.user.private_key));
+      } else {
+        dispatch(setSignOut());
+        // signOut();
       }
     };
     fetchData();

@@ -81,6 +81,7 @@ const AccountSection: React.FC = () => {
   var oldPass = useRef("");
   var newPass = useRef("");
   const [ShowPass, setShowPass] = useState(false);
+  var dispatch = useAppDispatch();
   var selSession = useAppSelector((s) => s.session);
   if (name.current == null || name.current == undefined) return <></>;
   return (
@@ -188,8 +189,10 @@ const AccountSection: React.FC = () => {
               ),
             }),
           });
-          if (res.ok) signOut();
-          else {
+          if (res.ok) {
+            dispatch(setSignOut());
+            signOut();
+          } else {
             alert("Failure");
           }
         }}
