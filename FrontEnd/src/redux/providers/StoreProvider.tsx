@@ -1,3 +1,5 @@
+//StroeProvider.tsx
+//Needs to be chnged a
 "use client";
 import { useRef } from "react";
 import { Provider } from "react-redux";
@@ -69,3 +71,15 @@ export default function StoreProvider({
 
   return <Provider store={storeRef.current}>{children}</Provider>;
 }
+
+persistor.subscribe(() => {
+  /* Hydrate React components when persistor has synced with redux store */
+  const { bootstrapped } = persistor.getState();
+
+  if (bootstrapped) {
+    const rootElement = document.getElementById("root");
+    if (rootElement) {
+      hydrateRoot(rootElement, <Main />);
+    }
+  }
+});

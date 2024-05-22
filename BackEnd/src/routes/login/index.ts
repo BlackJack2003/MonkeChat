@@ -159,12 +159,12 @@ router.post("/sessionUserData", async (req, res) => {
   try {
     const b = req.body;
     var { serverPassword, email } = b;
-    console.log(
-      "Getting session for email:" +
-        email +
-        "\nNo of session call:" +
-        ++no_of_session_call
-    );
+    // console.log(
+    //   "Getting session for email:" +
+    //     email +
+    //     "\nNo of session call:" +
+    //     ++no_of_session_call
+    // );
     if (serverPassword != process.env.BACKEND_KEY) {
       res.status(400).send("Nope password");
       return;
