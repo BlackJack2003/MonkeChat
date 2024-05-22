@@ -1,3 +1,4 @@
+#docker-compose.yaml
 version: "3.8"
 
 services:
@@ -7,10 +8,10 @@ services:
     volumes:
       - ./db:/data/db:rw
     networks:
-      - monkenet
+      - monkedbnet
 
   web:
-    build: ./FrontEnd/Dockerfile
+    image: node:latest
     container_name: monke-web
     volumes:
       - ./FrontEnd:/app
@@ -18,6 +19,9 @@ services:
       - db
     networks:
       - monkenet
+      - monkedbnet
+    working_dir: /app
+    command: "npm start"
 
   nginx:
     image: nginx:latest

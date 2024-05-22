@@ -6,13 +6,10 @@ import { useSearchParams } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import ErrorBox from "@/components/errorBox";
 import { hashString } from "@/utils/general/general";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { useAppDispatch } from "@/redux/hooks/hooks";
 import { setPassword } from "@/redux/actions/sessionAction";
 
 const LoginPage: React.FC = () => {
-  //   const providers = useRef<Awaited<ReturnType<typeof getProviders>> | null>(
-  //     null
-  //   );
   const errorMsg = useRef<string | string[]>("");
   const [update, setupdate] = useState(false);
 
@@ -150,16 +147,6 @@ const LoginPage: React.FC = () => {
                     if (resp.ok) {
                       console.log("Dispatching setPassword");
                       dispatch(setPassword(pass.current));
-                      //   if (typeof window !== undefined && window != undefined) {
-                      //     var oldS: any =
-                      //       window.localStorage.getItem("app_state");
-                      //     oldS = JSON.parse(oldS || "");
-                      //     if (oldS.session != undefined) {
-                      //       oldS.session.password = pass.current;
-                      //     }
-                      //     oldS = JSON.stringify(oldS);
-                      //     window.localStorage.setItem("app_state", oldS);
-                      //   }
                       signIn("credentials", {
                         username: userName.current,
                         password: hashString(pass.current),
@@ -181,7 +168,7 @@ const LoginPage: React.FC = () => {
             <div className="text-center text-sky-100 mt-2">
               Dont have an account? 
               <a href="/signup" className=" text-sky-500">
-                Sign up!! 
+                Sign up!!
               </a>
             </div>
             <div className="h-5"></div>

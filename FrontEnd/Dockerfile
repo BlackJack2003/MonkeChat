@@ -7,4 +7,3 @@ EXPOSE 3000
 
 # Run Gunicorn using the wait-for-it script to wait for PostgreSQL and reset db if needed
 CMD ["node","start"]
-
