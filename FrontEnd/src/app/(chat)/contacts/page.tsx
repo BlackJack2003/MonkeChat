@@ -117,7 +117,7 @@ const ContactSidePanel: React.FC = () => {
           var y = b.userName || "";
           return x < y ? -1 : x > y ? 1 : 0;
         });
-        setupdate(!update);
+        setupdate((prevupdate) => !prevupdate);
       }
     };
     _();

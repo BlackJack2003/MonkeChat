@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -179,4 +179,12 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+const LPage: React.FC = () => {
+  return (
+    <Suspense>
+      <LoginPage />
+    </Suspense>
+  );
+};
+
+export default LPage;

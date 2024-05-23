@@ -8,6 +8,7 @@ import { setSession } from "../actions/sessionAction";
 const loadState = () => {
   try {
     // Load the data saved in localStorage, against the key 'app_state'
+    // console.log(typeof window);
     if (typeof window !== undefined && window !== undefined) {
       const serialisedState = window.localStorage.getItem("app_state");
 
@@ -23,7 +24,7 @@ const loadState = () => {
     // Return undefined if localStorage is not available,
     // or data could not be de-serialised,
     // or there was some other error
-    console.error(err);
+    // console.error(err);
     return undefined;
   }
 };

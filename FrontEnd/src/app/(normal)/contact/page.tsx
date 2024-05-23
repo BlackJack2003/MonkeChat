@@ -6,8 +6,9 @@ function ContactPage() {
   const lname = useRef("");
   const message = useRef("");
   const email = useRef("");
-  const changeIds: string[] = ["firstname", "lastname", "email", "message"];
+
   useEffect(() => {
+    const changeIds: string[] = ["firstname", "lastname", "email", "message"];
     changeIds.forEach((id) => {
       const element = document.getElementById(id) as HTMLInputElement | null;
       if (element) {

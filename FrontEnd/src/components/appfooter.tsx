@@ -38,11 +38,11 @@ function ModeBtn() {
   const preferredThemeDark = useAppSelector((state: any) => {
     return state.theme.darkMode;
   });
-  const myPass = useAppSelector((state) => state.session.password);
+  const session = useAppSelector((state) => state.session);
   useEffect(() => {
     setIsChecked(preferredThemeDark);
     const fetchData = async () => {
-      console.log("maPass:", myPass);
+      console.log("maPass:", session.password);
       dataRef.current = await getSession();
 
       if (dataRef.current != null) {
@@ -55,7 +55,6 @@ function ModeBtn() {
           dispatch(setPrivateKey(dataRef.current.user.private_key));
       } else {
         dispatch(setSignOut());
-        // signOut();
       }
     };
     fetchData();

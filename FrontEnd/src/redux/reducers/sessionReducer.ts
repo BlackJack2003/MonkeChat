@@ -51,7 +51,14 @@ const sessionReducer = (state = initialState, action: any) => {
         email: action.payload,
       };
     case SessionActionTypes.SIGN_OUT:
-      return initialState;
+      return {
+        image: "",
+        password: "",
+        email: "",
+        username: "",
+        public_key: "",
+        private_key: "",
+      };
     default:
       return state;
   }

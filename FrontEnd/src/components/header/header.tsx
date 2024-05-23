@@ -44,7 +44,8 @@ const Header: React.FC = () => {
               <HeaderLeftItems
                 text="Feature's"
                 func={() => {
-                  if (window != undefined) window.location.href = "#";
+                  if (window != undefined)
+                    window.location.href = "/home#features";
                 }}
               />
               <HeaderLeftItems

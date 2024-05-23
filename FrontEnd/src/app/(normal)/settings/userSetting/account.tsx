@@ -71,7 +71,7 @@ const AccountSection: React.FC = () => {
       name.current = data?.user.name;
       email.current = data?.user.email;
       image.current = data?.user.image;
-      setupdate(!update);
+      setupdate((prevupdate) => !prevupdate);
       console.log(data);
     }
     return () => {};

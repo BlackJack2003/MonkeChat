@@ -55,6 +55,31 @@ const Home = () => {
           </Carousel>
         </div>
       </section>
+      <section
+        id="features"
+        className="h-screen w-screen flex justify-between"
+        style={{ backgroundImage: "url(/home_static/8764.jpg)" }}
+      >
+        <div className="text-white z-[1] flex sm:flex-col align-middle items-center m-auto backdrop-blur-lg p-10 w-[75vw] h-[75%] relative shadow-[5px 8px 10px stroke-neutral-600] rounded-md border-red-400 border-1 shadow-xl">
+          <p className="mx-auto py-5 text-7xl font-extrabold ">Features</p>
+          <div className="flex justify-evenly mt-5">
+            <div>
+              <Image
+                height={250}
+                width={250}
+                src="/home_static/lock.png"
+                alt="privacy"
+                style={{
+                  filter:
+                    "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(144deg) brightness(107%) contrast(99%)",
+                  boxShadow: "initial",
+                }}
+              />
+              <p className="text-4xl text-center mx-auto">Privacy</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
