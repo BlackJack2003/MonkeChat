@@ -174,14 +174,6 @@ const ContactPanel: React.FC = () => {
 
 const Contacts: React.FC = () => {
   const [panel, setpanel] = useState<ContactInterface>({});
-  //   var session = useRef<Session | null>(null);
-  //   useEffect(() => {
-  //     let _ = async () => {
-  //       session.current = await getSession();
-  //     };
-  //     _();
-  //     return () => {};
-  //   }, []);
   const [error, seterror] = useState("");
   return (
     <ContactPanelContext.Provider

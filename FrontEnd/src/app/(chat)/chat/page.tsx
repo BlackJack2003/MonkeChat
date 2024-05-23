@@ -20,15 +20,7 @@ import {
   getMessagesAll,
   sendMessage,
 } from "../../../utils/chat/utils";
-import { SessionProvider, getSession } from "next-auth/react";
-import { Session } from "next-auth";
 import { useAppSelector } from "@/redux/hooks/hooks";
-import {
-  decryptData,
-  decryptWithPrivateKey,
-  encryptData,
-} from "@/utils/general/general";
-import dynamic from "next/dynamic";
 
 const ChatPanelContext = createContext<{
   panel: ChatPanelInterface;

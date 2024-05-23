@@ -1,10 +1,7 @@
 "use client";
 import Image from "next/image";
 import SignInOrLogo from "./SignBtn";
-import { SessionProvider, getSession } from "next-auth/react";
 import SidePanelButton from "./sidePanel";
-import { Session } from "next-auth";
-import { useRef, useEffect } from "react";
 import { useAppSelector } from "@/redux/hooks/hooks";
 
 const HeaderLeftItems: React.FC<{ text: string; func: Function }> = ({
@@ -23,14 +20,7 @@ const HeaderLeftItems: React.FC<{ text: string; func: Function }> = ({
 };
 
 const Header: React.FC = () => {
-  var session = useAppSelector((s) => s.session); //useRef<Session | null>(null);
-  //   useEffect(() => {
-  //     let _ = async () => {
-  //       session.current = await getSession();
-  //     };
-  //     _();
-  //     return () => {};
-  //   }, []);
+  //   var session = useAppSelector((s) => s.session); //useRef<Session | null>(null);
   return (
     <header id="headerThing" className="fixed top-0 max-w-fit z-20 ">
       <div

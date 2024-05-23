@@ -88,13 +88,9 @@ const SettingSidePanel: React.FC = () => {
 
 const Setting: React.FC = () => {
   const [selected, setSelected] = useState<MenuItems>(MenuItems.noItems);
-  const sessionRef = useRef<Session | null>(null);
+  //   const sessionRef = useRef<Session | null>(null);
   useEffect(() => {
     setSelected(MenuItems.Accounts);
-    const _ = async () => {
-      sessionRef.current = await getSession();
-    };
-    _();
   }, []);
   return (
     <SettingsContext.Provider value={{ selected, setSelected }}>
@@ -109,14 +105,8 @@ const Setting: React.FC = () => {
           <div className="grid grid-cols-8 pt-3 sm:grid-cols-10">
             <SettingSidePanel />
             <div className="col-span-8 overflow-x-hidden rounded-xl sm:px-8 sm:shadow bg-white dark:bg-gray-900 min-h-[75vh]">
-              <SessionProvider
-                session={sessionRef.current}
-                refetchInterval={10 * 60}
-                refetchOnWindowFocus={false}
-              >
-                {selected == MenuItems.Accounts &&
-                  menuItemLookUp.Accounts.MenuNode}
-              </SessionProvider>
+              {selected == MenuItems.Accounts &&
+                menuItemLookUp.Accounts.MenuNode}
             </div>
           </div>
         </div>
