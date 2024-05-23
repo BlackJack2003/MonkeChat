@@ -20,7 +20,7 @@ import {
   getMessagesAll,
   sendMessage,
 } from "../../../utils/chat/utils";
-import { useSession, SessionProvider, getSession } from "next-auth/react";
+import { SessionProvider, getSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { useAppSelector } from "@/redux/hooks/hooks";
 import {
@@ -28,6 +28,7 @@ import {
   decryptWithPrivateKey,
   encryptData,
 } from "@/utils/general/general";
+import dynamic from "next/dynamic";
 
 const ChatPanelContext = createContext<{
   panel: ChatPanelInterface;
@@ -145,28 +146,27 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
 
 const ChatMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const searchVal = useRef<string>("");
-  var { data } = useSession();
-  var password = useAppSelector((s) => s.session.password);
+  var session = useAppSelector((s) => s.session);
   const [update, setupdate] = useState(false);
   var list = useRef<ChatMenuItemInterface[]>([]);
   useEffect(() => {
     const _ = async () => {
       list.current = await getChats(
-        data?.user.name,
-        data?.user.private_key,
-        password
+        session.username,
+        session.private_key,
+        session.password
       );
       list.current.sort(function (a, b) {
         var x = Date.parse(a.updateAt) || 0;
         var y = Date.parse(b.updateAt) || 0;
         return x < y ? -1 : x > y ? 1 : 0;
       });
-      setupdate(!update);
+      setupdate((prevupdate) => !prevupdate);
     };
     _();
     return () => {};
-  }, [data]);
-  if (data == null) return <></>;
+  }, [session]);
+  if (session.username == "") return <></>;
   return (
     <div
       className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x"
@@ -222,23 +222,6 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
   var realEncKey: string = encKey || "";
 
   useEffect(() => {
-    console.log(
-      "Da session password:",
-      session.password,
-      "\nChat encKey:",
-      encKey
-    );
-    // if (session.password != undefined && encKey != undefined) {
-    //   var decPrikey = decryptData(session.password, session.private_key);
-    //   console.log(
-    //     "Private key:",
-    //     decPrikey,
-    //     "\nattempting to decrypt:",
-    //     encKey
-    //   );
-    //   realEncKey = decryptWithPrivateKey(decPrikey, encKey);
-    //   console.log("Chat password:", realEncKey);
-    // }
     const _ = async () => {
       if (ChatId != null && realEncKey != undefined)
         myMessages.current = await getMessagesAll(
@@ -248,12 +231,12 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
           session.password,
           realEncKey
         );
-      doUpdate(update - 1);
+      doUpdate((pu) => pu - 1);
     };
     _();
 
     return () => {};
-  }, [session, encKey]);
+  }, [session, realEncKey, ChatId]);
   const sendMsg = async () => {
     const textEle = document.getElementById(
       "msgBox"
@@ -280,7 +263,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
         session.password,
         realEncKey
       );
-    console.log(myMessages.current);
+    // console.log(myMessages.current);
     if (textEle?.value) textEle.value = "";
     doUpdate(update + 1);
   };
@@ -306,7 +289,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
     }
   });
 
-  if (userName == null) return <></>;
+  if (userName == null) return <div></div>;
 
   return (
     <div className="h-screen flex-grow flex-shrink resize-x">
@@ -361,26 +344,11 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
 
 const Chat: React.FC = () => {
   const [panel, setPanel] = useState<ChatPanelInterface>({});
-  var session = useRef<Session | null>(null);
-  useEffect(() => {
-    let _ = async () => {
-      session.current = await getSession();
-    };
-    _();
-    return () => {};
-  }, []);
   return (
     <ChatPanelContext.Provider value={{ panel, setPanel }}>
-      <SessionProvider
-        session={session.current}
-        refetchInterval={10 * 60}
-        refetchOnWindowFocus={false}
-      >
-        <ChatMenu />
-        <ChatPanel {...panel}></ChatPanel>
-      </SessionProvider>
+      <ChatMenu />
+      <ChatPanel {...panel}></ChatPanel>
     </ChatPanelContext.Provider>
   );
 };
-
 export default Chat;

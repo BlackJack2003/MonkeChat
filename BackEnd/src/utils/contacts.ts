@@ -28,6 +28,8 @@ function binarySearch(arr: any[], target: any): number {
 
 //Add b to a's contact list and add matching chat
 export async function addContact(a: string, b: string): Promise<boolean> {
+  var chatA = null;
+  //   var chatB = null;
   try {
     const randKey = generateRandomKey();
     var userA = await User.findOne({ name: a });
@@ -44,66 +46,45 @@ export async function addContact(a: string, b: string): Promise<boolean> {
       return false;
     }
     // Check if 'b' already exists in 'A's contacts
-    let i = binarySearch(userA.contacts, userB._id);
-    var existingContact = i != -1 ? userA.contacts[i] : null;
+    let i = userA.contacts.find((item: any) => item.cid == userB._id);
+    //  binarySearch(userA.contacts, userB._id);
+    var existingContact = i != undefined ? userA.contacts[i] : null;
     if (existingContact) {
       console.log(`User: ${b} already exists in contacts of ${a}`);
       return true;
     }
 
     // Create a new chat
-    const chat = new Chat();
-    chat.people.push({
+    chatA = new Chat();
+    chatA.people.push({
       pid: userA._id,
       encKey: encryptWithPublicKey(userA.public_key, randKey),
     });
-    chat.people.push({
+    chatA.people.push({
       pid: userB._id,
       encKey: encryptWithPublicKey(userB.public_key, randKey),
     });
-    await chat.save();
+    await chatA.save();
 
     // Create a new contact object for 'a's contacts
     const newContactA = {
       cid: userB._id,
-      chat: chat._id,
+      chat: chatA._id,
     };
-
-    // Insert the new contact into 'a's contacts array maintaining lexicographic order
-    let inserted = false;
-    for (let i = 0; i < userA.contacts.length; i++) {
-      if (String(userA.contacts[i].cid) > String(userB._id)) {
-        userA.contacts.splice(i, 0, newContactA);
-        inserted = true;
-        break;
-      }
-    }
-    if (!inserted) {
-      userA.contacts.push(newContactA);
-    }
+    userA.contacts.push(newContactA);
     const newContactB = {
       cid: userA._id,
-      chat: chat._id,
+      chat: chatA._id,
     };
     // Insert the new contact into 'b's contacts array maintaining lexicographic order
-    inserted = false;
-    for (let i = 0; i < userB.contacts.length; i++) {
-      if (String(userB.contacts[i].cid) > String(userA._id)) {
-        userB.contacts.splice(i, 0, newContactB);
-        inserted = true;
-        break;
-      }
-    }
-    if (!inserted) {
-      userB.contacts.push(newContactB);
-    }
-
+    userB.contacts.push(newContactB);
     // Save the updated 'a' user document
     await userA.save();
     await userB.save();
     return true;
   } catch (e: any) {
     console.error(e.message);
+    if (chatA != null) chatA.delete();
     return false;
   }
 }

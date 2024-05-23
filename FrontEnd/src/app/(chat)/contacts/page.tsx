@@ -7,12 +7,11 @@ import React, {
   useContext,
   createContext,
 } from "react";
-import { SessionProvider, getSession, useSession } from "next-auth/react";
 import { ContactInterface } from "./interfaces";
 import Image from "next/image";
 import { getContacts, getPanel, addContact } from "@/utils/contact/utils";
-import { Session } from "next-auth";
 import Error from "@/components/error";
+import { useAppSelector } from "@/redux/hooks/hooks";
 
 const ContactPanelContext = createContext<{
   panel: ContactInterface;
@@ -27,7 +26,7 @@ const GetContactContext = () => useContext(ContactPanelContext);
 const PanelAddContactSection: React.FC = () => {
   const [isOpen, setisOpen] = useState(false);
   const addUsername = useRef("");
-  const { data } = useSession();
+  const session = useAppSelector((s) => s.session);
   return (
     <div className="h-fit flex mt-auto w-full flex-row">
       <div
@@ -49,8 +48,13 @@ const PanelAddContactSection: React.FC = () => {
         <div
           className="bg-green-600 hover:bg-green-400 ml-[-45px] h-6 my-auto rounded-md pb-1 px-1 "
           onClick={async (e) => {
-            if (data) {
-              var resp = await addContact(data, addUsername.current);
+            console.log(session);
+            if (session.username != "") {
+              var resp = await addContact(
+                session.username,
+                session.private_key,
+                addUsername.current
+              );
               if (resp) location.reload();
             }
           }}
@@ -105,13 +109,16 @@ const ContactMenuItem: React.FC<ContactInterface> = ({
 
 const ContactSidePanel: React.FC = () => {
   const searchVal = useRef<string>("");
-  const { data } = useSession();
   const [update, setupdate] = useState(false);
+  const session = useAppSelector((s) => s.session);
   const contactsList = useRef<ContactInterface[]>([]);
   useEffect(() => {
     const _ = async () => {
-      if (data != null) {
-        contactsList.current = await getContacts(data);
+      if (session.password != "") {
+        contactsList.current = await getContacts(
+          session.username,
+          session.private_key
+        );
         contactsList.current.sort(function (a, b) {
           var x = a.userName || "";
           var y = b.userName || "";
@@ -122,8 +129,7 @@ const ContactSidePanel: React.FC = () => {
     };
     _();
     return () => {};
-  }, [data]);
-  if (data == null) return <></>;
+  }, [session]);
   return (
     <div
       className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x"
@@ -168,14 +174,14 @@ const ContactPanel: React.FC = () => {
 
 const Contacts: React.FC = () => {
   const [panel, setpanel] = useState<ContactInterface>({});
-  var session = useRef<Session | null>(null);
-  useEffect(() => {
-    let _ = async () => {
-      session.current = await getSession();
-    };
-    _();
-    return () => {};
-  }, []);
+  //   var session = useRef<Session | null>(null);
+  //   useEffect(() => {
+  //     let _ = async () => {
+  //       session.current = await getSession();
+  //     };
+  //     _();
+  //     return () => {};
+  //   }, []);
   const [error, seterror] = useState("");
   return (
     <ContactPanelContext.Provider
@@ -185,14 +191,9 @@ const Contacts: React.FC = () => {
       }}
     >
       <Error text={error} settext={seterror} />
-      <SessionProvider
-        session={session.current}
-        refetchInterval={10 * 60}
-        refetchOnWindowFocus={false}
-      >
-        <ContactSidePanel />
-        <ContactPanel />
-      </SessionProvider>
+
+      <ContactSidePanel />
+      <ContactPanel />
     </ContactPanelContext.Provider>
   );
 };

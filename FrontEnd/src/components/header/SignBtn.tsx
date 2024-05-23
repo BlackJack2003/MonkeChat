@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import ImgDropMenu from "./imgDropMenu";
 import { useAppSelector } from "@/redux/hooks/hooks";
 
@@ -75,7 +74,6 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 };
 
 const SignInOrLogo: React.FC = () => {
-  //   const { status, data } = useSession();
   const data = useAppSelector((s) => s.session);
   var image = useRef("");
   var email = useRef("");

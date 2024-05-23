@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { decryptData, encryptData, hashString } from "@/utils/general/general";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { setSignOut } from "@/redux/actions/sessionAction";
@@ -62,20 +62,20 @@ const DelMenu: React.FC<{ username: string }> = ({ username }) => {
 };
 
 const AccountSection: React.FC = () => {
-  const { data } = useSession();
+  const session = useAppSelector((s) => s.session);
   var name = useRef<string | null>(null);
   var email = useRef<string | null>(null);
   var image = useRef<string | null>(null);
   useEffect(() => {
-    if (data?.user) {
-      name.current = data?.user.name;
-      email.current = data?.user.email;
-      image.current = data?.user.image;
+    if (session.username != "") {
+      name.current = session.username;
+      email.current = session.email;
+      image.current = session.image;
       setupdate((prevupdate) => !prevupdate);
-      console.log(data);
+      //   console.log(sess);
     }
     return () => {};
-  }, [data]);
+  }, [session]);
   const [delMenuOpen, setdelMenuOpen] = useState(false);
   const [update, setupdate] = useState(false);
   var oldPass = useRef("");

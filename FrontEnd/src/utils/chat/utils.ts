@@ -21,15 +21,17 @@ export const getChats: (
   password
 ) {
   try {
+    var toSend = {
+      name,
+      private_key,
+    };
+    // console.log("Getting chats via:", toSend);
     var resp = await fetch("/backEndApi/chat/getChats", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        private_key,
-      }),
+      body: JSON.stringify(toSend),
     });
 
     var toRet: ChatMenuItemInterface[] = await resp.json();
