@@ -31,9 +31,9 @@ const SidePanel = () => {
     <div className="flex absolute mt-[26px] ml-[-46px] text-black dark:text-white">
       <div className=" rounded-tr-lg rounder-br-lg shadow-sm shadow-slate-500 z-10 h-[90vh] w-[20vw] bg-gray-100 dark:bg-gray-800 top-0 flex flex-col">
         <div className="my-2"></div>
-        <SidePanelItem href="/home" src="/home.svg" text="Home" />
-        <SidePanelItem href="/chat" src="/chat.png" text="Chat" />
-        <SidePanelItem href="/contacts" src="/person.png" text="Contacts" />
+        <SidePanelItem href="home" src="/home.svg" text="Home" />
+        <SidePanelItem href="chat" src="/chat.png" text="Chat" />
+        <SidePanelItem href="contacts" src="/person.png" text="Contacts" />
       </div>
     </div>
   );

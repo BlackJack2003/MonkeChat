@@ -25,15 +25,15 @@ const LoginPage: React.FC = () => {
     });
     return () => {};
   }, []);
-  useEffect(() => {
-    const _ = async () => {
-      const session = await getSession();
-      if (session && window != undefined) {
-        window.location.href = "home";
-      }
-    };
-    _();
-  });
+  //   useEffect(() => {
+  //     const _ = async () => {
+  //       const session = await getSession();
+  //       if (session && window != undefined) {
+  //         window.location.href = "home";
+  //       }
+  //     };
+  //     _();
+  //   });
   const logoSize: number = 80;
   const imUrlRef: string = 'url("/login_back_light.jpeg")';
   const search = useSearchParams();

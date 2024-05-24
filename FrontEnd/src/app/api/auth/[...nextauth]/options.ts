@@ -1,5 +1,4 @@
 import type { NextAuthOptions, User } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const options: NextAuthOptions = {
@@ -20,7 +19,7 @@ const options: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (credentials == undefined) return null;
-        const response = await fetch("http://127.0.0.1:5000/login/", {
+        const response = await fetch(`${process.env.BACKEND_API_URL}/login/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -53,30 +52,36 @@ const options: NextAuthOptions = {
     async signIn({ user, account, profile, email, credentials }) {
       if (profile == undefined || profile.email == undefined) return true;
       else {
-        var response = await fetch("http://127.0.0.1:5000/login/getMail", {
-          //send email in json
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: profile.email }),
-        });
+        var response = await fetch(
+          `${process.env.BACKEND_API_URL}/login/getMail`,
+          {
+            //send email in json
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: profile.email }),
+          }
+        );
         var isExist = response.json().then((x) => x.isExist) || false;
         return isExist;
       }
     },
     async session({ session }) {
       try {
-        var resp = await fetch("http://127.0.0.1:5000/login/sessionUserData", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            serverPassword: process.env.BACKEND_KEY,
-            email: session.user?.email,
-          }),
-        });
+        var resp = await fetch(
+          `${process.env.BACKEND_API_URL}/login/sessionUserData`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              serverPassword: process.env.BACKEND_KEY,
+              email: session.user?.email,
+            }),
+          }
+        );
         var user: User = await resp.json();
         session.user = user;
         return session;

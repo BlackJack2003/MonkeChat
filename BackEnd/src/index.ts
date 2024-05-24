@@ -6,7 +6,14 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import { addContact } from "./utils/contacts";
 
-dotenv.config({ path: ".env.local" });
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development";
+dotenv.config({ path: envFile });
+
+console.log("Env:" + process.env.NODE_ENV);
+console.log("Database URL:", process.env.DATABASE_URL);
 
 const loginRouter = require("./routes/login/index");
 const feedBackRouter = require("./routes/Feedback/index");
@@ -16,7 +23,8 @@ const chatRouter = require("./routes/chat/index");
 
 const app = express();
 
-const dbAddr: string = "mongodb://127.0.0.1:27017/monkeChatDb";
+const dbAddr: string =
+  process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/monkeChatDb";
 
 interface Email {
   username: string;

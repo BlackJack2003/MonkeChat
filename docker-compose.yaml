@@ -1,4 +1,3 @@
-#docker-compose.yaml
 version: "3.8"
 
 services:
@@ -7,21 +6,45 @@ services:
     container_name: monke-db
     volumes:
       - ./db:/data/db:rw
+    ports:
+      - "27017:27017"
     networks:
       - monkedbnet
 
-  web:
-    image: node:latest
-    container_name: monke-web
+  backdb:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    container_name: monke-backdb
     volumes:
-      - ./FrontEnd:/app
+      - ./BackEnd:/app
+      - ./BackEnd/dist:/app/dist:rw
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./BackEnd/.env.production
     depends_on:
       - db
     networks:
       - monkenet
       - monkedbnet
-    working_dir: /app
-    command: "npm start"
+
+  web:
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
+    container_name: monke-web
+    depends_on:
+      - backdb
+    volumes:
+      - ./FrontEnd:/app
+      - ./FrontEnd/dist:/app/dist:rw
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./FrontEnd/.env.production
+    networks:
+      - monkenet
 
   nginx:
     image: nginx:latest
@@ -45,4 +68,6 @@ services:
 
 networks:
   monkenet:
+    driver: bridge
+  monkedbnet:
     driver: bridge

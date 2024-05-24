@@ -60,7 +60,6 @@ router.post("/validate", async (req, res) => {
         search = await User.findOne({ email: email._id }).populate("email");
       }
     } else {
-      //   console.log("Looking for username:" + username);
       search = await User.findOne({ name: username }).populate("email");
     }
     if (search == null || search.password !== password) {

@@ -120,7 +120,14 @@ const ChatMenuItem: React.FC<ChatMenuItemInterface> = ({
       <img
         src={Img}
         alt={Name}
-        style={{ height: imgSize, width: imgSize }}
+        style={{
+          height: imgSize,
+          width: imgSize,
+          maxHeight: imgSize,
+          maxWidth: imgSize,
+          minHeight: imgSize,
+          minWidth: imgSize,
+        }}
         className="rounded-full ml-2 ring-2 ring-slate-700 h-fit w-fit my-auto"
       />
       <div className="flex flex-col ml-2 flex-grow">

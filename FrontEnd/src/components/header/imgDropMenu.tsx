@@ -33,15 +33,15 @@ const ImgDropMenu: React.FC = () => {
         <ImgDropMenuItem href="/home" val="Home" />
         <ImgDropMenuItem href="/settings" val="Settings" />
         <li>
-          <div
+          <button
             onClick={() => {
               dispatch(setSignOut());
               signOut();
             }}
-            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer w-full text-start"
           >
             Sign out
-          </div>
+          </button>
         </li>
       </ul>
     </div>
