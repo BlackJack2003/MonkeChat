@@ -35,14 +35,16 @@ export const getChats: (
     });
 
     var toRet: ChatMenuItemInterface[] = await resp.json();
-
+    console.log("Got encrypted chats:", toRet, "\nTrying to decrypt");
     var decPrikey = decryptData(password, private_key);
+    console.log("Decrypted key:", decPrikey);
     toRet.forEach((item, index) => {
       toRet[index].encKey = decryptWithPrivateKey(decPrikey, item.encKey);
     });
+
     return toRet;
   } catch (e: any) {
-    console.error("Get chat error:\n", e.message);
+    console.error("Get chat error:\n", e);
     return [];
   }
 };
@@ -86,6 +88,7 @@ export const getMessagesAll: (
       }),
     });
     const r: MessageInterface[] = await resp.json();
+    console.log("Got encrypted messages:", r, "\nTrying to decrypt");
     r.forEach((item, index) => {
       r[index].text = decryptData(encKey, item.text || "");
     });
