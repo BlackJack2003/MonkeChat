@@ -35,13 +35,13 @@ const Header: React.FC = () => {
                 text="Feature's"
                 func={() => {
                   if (window != undefined)
-                    window.location.href = "/home#features";
+                    window.location.href = "home#features";
                 }}
               />
               <HeaderLeftItems
                 text="Chat's"
                 func={() => {
-                  if (window != undefined) window.location.href = "/chat";
+                  if (window != undefined) window.location.href = "chat";
                 }}
               />
             </div>

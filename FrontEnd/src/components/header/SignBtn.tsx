@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import ImgDropMenu from "./imgDropMenu";
 import { useAppSelector } from "@/redux/hooks/hooks";
+import { signOut } from "next-auth/react";
 
 interface SignBtnInterface {
   val: string;
@@ -10,13 +11,16 @@ interface SignBtnInterface {
 
 const SignBtn: React.FC<SignBtnInterface> = ({ val, onC }) => {
   return (
-    <div
-      onClick={onC}
+    <button
+      onClick={() => {
+        // signOut();
+        onC();
+      }}
       title=""
       className="py-2 px-4 rounded-full text-base font-medium focus:text-blue-600 cursor-pointer mx-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:border-2 align-middle"
     >
       {val}
-    </div>
+    </button>
   );
 };
 
@@ -92,13 +96,17 @@ const SignInOrLogo: React.FC = () => {
         <SignBtn
           val="Sign in"
           onC={() => {
-            if (window != undefined) window.location.href = "/";
+            if (window != undefined) {
+              window.location.href = "/";
+            }
           }}
         />
         <SignBtn
           val="Sign Up"
           onC={() => {
-            if (window != undefined) window.location.href = "/signup";
+            if (window != undefined) {
+              window.location.href = "/signup";
+            }
           }}
         ></SignBtn>
       </div>

@@ -46,6 +46,10 @@ function ModeBtn() {
       dataRef.current = await getSession();
 
       if (dataRef.current != null) {
+        if (session.password == "") {
+          dispatch(setSignOut());
+          signOut();
+        }
         dispatch(setUsername(dataRef.current.user.name));
         dispatch(setEmail(dataRef.current.user.email));
         dispatch(setImage(dataRef.current.user.image));

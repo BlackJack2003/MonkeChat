@@ -21,12 +21,23 @@ const ContactPanelContext = createContext<{
   setPanel: (x: ContactInterface) => {},
 });
 
+const ErrorContext = createContext<{
+  errorText: string;
+  seterrorText: (x: string) => void;
+}>({
+  errorText: "",
+  seterrorText: (x: string) => {},
+});
+
+const GetErrorContext = () => useContext(ErrorContext);
 const GetContactContext = () => useContext(ContactPanelContext);
 
 const PanelAddContactSection: React.FC = () => {
   const [isOpen, setisOpen] = useState(false);
   const addUsername = useRef("");
   const session = useAppSelector((s) => s.session);
+  const [update, setupdate] = useState(false);
+  const { errorText, seterrorText } = GetErrorContext();
   return (
     <div className="h-fit flex mt-auto w-full flex-row">
       <div
@@ -48,14 +59,20 @@ const PanelAddContactSection: React.FC = () => {
         <div
           className="bg-green-600 hover:bg-green-400 ml-[-45px] h-6 my-auto rounded-md pb-1 px-1 "
           onClick={async (e) => {
-            console.log(session);
             if (session.username != "") {
               var resp = await addContact(
                 session.username,
                 session.private_key,
                 addUsername.current
               );
-              if (resp) location.reload();
+              console.log(resp);
+              if (resp == "ok") {
+                location.reload();
+              } else {
+                seterrorText(resp);
+                setupdate(!update);
+              }
+              console.log("Error text:", errorText);
             }
           }}
         >
@@ -96,7 +113,13 @@ const ContactMenuItem: React.FC<ContactInterface> = ({
         alt={userName || ""}
         height={imgSize}
         width={imgSize}
-        className="rounded-full ml-2 ring-2 ring-slate-700 my-auto"
+        style={{
+          maxHeight: imgSize,
+          maxWidth: imgSize,
+          minHeight: imgSize,
+          minWidth: imgSize,
+        }}
+        className="rounded-full ml-2 ring-2 ring-slate-700 my-auto overflow-hidden"
       />
       <div className="flex flex-col ml-2">
         <div className="text-2xl">
@@ -175,6 +198,12 @@ const ContactPanel: React.FC = () => {
 const Contacts: React.FC = () => {
   const [panel, setpanel] = useState<ContactInterface>({});
   const [error, seterror] = useState("");
+  const [update, setupdate] = useState(0);
+  useEffect(() => {
+    console.log(error);
+    setupdate((pu) => ~pu);
+    return () => {};
+  }, [error]);
   return (
     <ContactPanelContext.Provider
       value={{
@@ -182,10 +211,17 @@ const Contacts: React.FC = () => {
         setPanel: setpanel,
       }}
     >
-      <Error text={error} settext={seterror} />
+      <ErrorContext.Provider
+        value={{
+          errorText: error,
+          seterrorText: seterror,
+        }}
+      >
+        <Error key={update} text={error} setText={seterror} />
 
-      <ContactSidePanel />
-      <ContactPanel />
+        <ContactSidePanel />
+        <ContactPanel />
+      </ErrorContext.Provider>
     </ContactPanelContext.Provider>
   );
 };

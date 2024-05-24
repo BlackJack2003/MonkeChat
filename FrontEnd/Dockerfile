@@ -1,9 +1,15 @@
-# Use an official Python runtime as a parent image
 FROM node:latest
+# Set the working directory
+WORKDIR /app
+RUN npm run build
+# Copy the built files from the previous stage
+# COPY --from=build /app .
 
-WORKDIR /app/
+# Install only production dependencies
+# RUN npm install --only=production
 
+# Expose the application port (change 3000 to your application's port if different)
 EXPOSE 3000
 
-# Run Gunicorn using the wait-for-it script to wait for PostgreSQL and reset db if needed
-CMD ["node","start"]
+# Start the application
+CMD ["npm", "start"]

@@ -46,7 +46,7 @@ export const addContact: (
   name: string,
   private_key: string,
   nuname: string
-) => Promise<boolean> = async (
+) => Promise<string> = async (
   name: string,
   private_key: string,
   nuname: string
@@ -63,9 +63,9 @@ export const addContact: (
         user_to_add: nuname,
       }),
     });
-    return resp.ok;
+    return resp.ok ? "ok" : await resp.text();
   } catch (e: any) {
     console.error(e.message);
-    return false;
+    return "";
   }
 };

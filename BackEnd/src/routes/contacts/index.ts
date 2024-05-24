@@ -41,7 +41,7 @@ router.post("/getContacts", async (req, res) => {
 router.post("/addContact", async (req, res) => {
   try {
     const b = req.body;
-    console.log(b);
+
     const { name, private_key, user_to_add } = b;
     var user = await User.findOne({ name: name });
 
@@ -50,7 +50,7 @@ router.post("/addContact", async (req, res) => {
       console.log("User:" + name + " not found");
       return;
     }
-    if (user == user_to_add) {
+    if (name == user_to_add) {
       res.status(500).send("Nope");
       console.log("User:" + name + " adding self found");
       return;

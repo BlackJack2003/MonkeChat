@@ -278,7 +278,7 @@ export const Signup: React.FC<any> = ({
                       body: JSON.stringify(toSend),
                     });
                     if (resp.ok) {
-                      window.location.href = "/";
+                      window.location.href = "";
                     } else {
                       var t = await resp.text();
                       errorMsg.current = t;
