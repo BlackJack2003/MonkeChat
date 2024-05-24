@@ -262,7 +262,6 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
         session.password,
         realEncKey
       );
-    // console.log(myMessages.current);
     if (textEle?.value) textEle.value = "";
     doUpdate(update + 1);
   };
