@@ -10,7 +10,7 @@ mkdir "%currentDir%FrontEnd"
 mkdir "%currentDir%BackEnd"
 
 rem Generate random strings for NEXTAUTH_SECRET and BACKEND_KEY
-for /f "delims=" %%i in ('powershell -Command "[guid]::NewGuid().ToString('N').Substring(0,44)"') do set "NEXTAUTH_SECRET=%%i"
+for /f "delims=" %%i in ('powershell -Command "[guid]::NewGuid().ToString('N').Substring(0,30)"') do set "NEXTAUTH_SECRET=%%i"
 for /f "delims=" %%i in ('powershell -Command "[guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N').Substring(0,32)"') do set "BACKEND_KEY=%%i"
 
 rem Display the generated secrets (for debugging purposes, can be removed)
@@ -46,7 +46,6 @@ rem Create empty BackEnd .env files as specified earlier
 ) > "%currentDir%BackEnd\.env.production"
 
 echo Folders and files created successfully.
-pause
 
 rem Change directory to FrontEnd and run npm install
 cd "%currentDir%FrontEnd"
