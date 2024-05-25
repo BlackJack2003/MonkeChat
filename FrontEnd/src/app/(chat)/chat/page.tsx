@@ -239,7 +239,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
       ChatId,
       realEncKey
     );
-    myMessages.current.concat(
+    myMessages.current = myMessages.current.concat(
       await getMessagesNew(
         session.username,
         ChatId,

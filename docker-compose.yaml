@@ -6,8 +6,6 @@ services:
     container_name: monke-db
     volumes:
       - ./db:/data/db:rw
-    ports:
-      - "27017:27017"
     networks:
       - monkedbnet
 
@@ -19,8 +17,6 @@ services:
     volumes:
       - ./BackEnd:/app
       - ./BackEnd/dist:/app/dist:rw
-    ports:
-      - "5000:5000"
     env_file:
       - ./BackEnd/.env.production
     depends_on:
@@ -39,8 +35,6 @@ services:
     volumes:
       - ./FrontEnd:/app
       - ./FrontEnd/dist:/app/dist:rw
-    ports:
-      - "3000:3000"
     env_file:
       - ./FrontEnd/.env.production
     networks:
