@@ -18,6 +18,7 @@ import "../../../utils/chat/utils";
 import {
   getChats,
   getMessagesAll,
+  getMessagesNew,
   sendMessage,
 } from "../../../utils/chat/utils";
 import { useAppSelector } from "@/redux/hooks/hooks";
@@ -193,8 +194,9 @@ const MessageArea: React.FC<{
   children?: ReactNode;
   msgList?: MessageInterface[];
 }> = ({ children = <></>, msgList = [] }) => {
+  // var ting =
   return (
-    <div className="chatPanelMsgAreaLight dark:chatPanelMsgAreaDark flex  w-full flex-grow flex-col z-10 relative ">
+    <div className="chatPanelMsgAreaLight dark:chatPanelMsgAreaDark flex  w-full flex-grow flex-col z-10 relative overflow-y-auto">
       <div className="h-full overflow-x-hidden w-full space-y-2 flex flex-col overflow-y-scroll">
         {children}
         {msgList.map((item, index) => {
@@ -219,23 +221,6 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
   var inputEle = useRef<null | HTMLInputElement>(null);
   var session = useAppSelector((s) => s.session);
   var realEncKey: string = encKey || "";
-
-  useEffect(() => {
-    const _ = async () => {
-      if (ChatId != null && realEncKey != undefined)
-        myMessages.current = await getMessagesAll(
-          session.username,
-          ChatId,
-          session.private_key,
-          session.password,
-          realEncKey
-        );
-      doUpdate((pu) => pu - 1);
-    };
-    _();
-
-    return () => {};
-  }, [session, realEncKey, ChatId]);
   const sendMsg = async () => {
     const textEle = document.getElementById(
       "msgBox"
@@ -254,27 +239,53 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
       ChatId,
       realEncKey
     );
-    if (encKey != undefined)
-      myMessages.current = await getMessagesAll(
+    myMessages.current.concat(
+      await getMessagesNew(
         session.username,
         ChatId,
         session.private_key,
         session.password,
-        realEncKey
-      );
+        realEncKey,
+        myMessages.current[myMessages.current.length - 1].MessageId || ""
+      )
+    );
     if (textEle?.value) textEle.value = "";
-    doUpdate(update + 1);
-  };
-  const handleKeyDown = async (event: any) => {
-    if (event.key === "Enter") {
-      await sendMsg();
-    }
+    doUpdate((pu) => pu + 1);
   };
 
   useEffect(() => {
-    interval.current = setInterval(() => {
-      doUpdate(update + 1);
-    }, 120000);
+    const _ = async () => {
+      if (ChatId != null && realEncKey != undefined)
+        myMessages.current = await getMessagesAll(
+          session.username,
+          ChatId,
+          session.private_key,
+          session.password,
+          realEncKey
+        );
+      doUpdate((pu) => pu - 1);
+    };
+    _();
+    const handleKeyDown = async (event: any) => {
+      if (event.key === "Enter") {
+        await sendMsg();
+      }
+    };
+    interval.current = setInterval(async () => {
+      var newmsgs = await getMessagesNew(
+        session.username,
+        ChatId,
+        session.private_key,
+        session.password,
+        realEncKey,
+        myMessages.current[myMessages.current.length - 1].MessageId || ""
+      );
+      if (newmsgs.length > 0) {
+        // console.log("Got new msgs:", newmsgs);
+        myMessages.current = myMessages.current.concat(newmsgs);
+        doUpdate((pu) => pu + 1);
+      }
+    }, 5000);
     const inputElement = inputEle.current;
     if (inputElement) {
       inputElement.addEventListener("keydown", handleKeyDown);
@@ -285,7 +296,9 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
         }
       };
     }
-  });
+
+    return () => {};
+  }, [session, realEncKey, ChatId]);
 
   if (userName == null) return <div></div>;
 

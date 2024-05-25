@@ -4,6 +4,7 @@ import {
   ChatMenuItemInterface,
   getChats,
   getMessagesAll,
+  getMessagesNew,
   sendMessage,
 } from "../../utils/chats";
 const router = express.Router();
@@ -47,6 +48,28 @@ router.post("/getMessagesAll", async (req, res) => {
       return;
     }
     const toSend = await getMessagesAll(user._id, chatId);
+    res.json(toSend);
+  } catch (e: any) {
+    console.error(e.message);
+    res.status(500).send("Fail");
+  }
+});
+
+router.post("/getMessagesNew", async (req, res) => {
+  try {
+    const b = req.body;
+    const { name, private_key, chatId, messageId } = b;
+    const user = await User.findOne({ name: name });
+    if (user == null || user == undefined) {
+      res.status(500).send("Nope");
+      console.log("User:" + name + " not found");
+      return;
+    }
+    if (private_key != user.private_key) {
+      res.status(500).send("Nope password no match");
+      return;
+    }
+    const toSend = await getMessagesNew(user._id, chatId, messageId);
     res.json(toSend);
   } catch (e: any) {
     console.error(e.message);

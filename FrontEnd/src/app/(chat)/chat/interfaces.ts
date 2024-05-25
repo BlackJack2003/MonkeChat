@@ -13,6 +13,7 @@ export interface MessageInterface {
   mine?: boolean;
   text?: string;
   time?: number | string;
+  MessageId?: string;
 }
 
 export interface ChatPanelInterface {

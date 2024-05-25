@@ -35,9 +35,9 @@ export const getChats: (
     });
 
     var toRet: ChatMenuItemInterface[] = await resp.json();
-    console.log("Got encrypted chats:", toRet, "\nTrying to decrypt");
+    // console.log("Got encrypted chats:", toRet, "\nTrying to decrypt");
     var decPrikey = decryptData(password, private_key);
-    console.log("Decrypted key:", decPrikey);
+    // console.log("Decrypted key:", decPrikey);
     toRet.forEach((item, index) => {
       toRet[index].encKey = decryptWithPrivateKey(decPrikey, item.encKey);
     });
@@ -88,14 +88,69 @@ export const getMessagesAll: (
       }),
     });
     const r: MessageInterface[] = await resp.json();
-    console.log("Got encrypted messages:", r, "\nTrying to decrypt");
+    // console.log("Got encrypted messages:", r, "\nTrying to decrypt");
     r.forEach((item, index) => {
       r[index].text = decryptData(encKey, item.text || "");
     });
-    console.log("Got messages:", r);
+    // console.log("Got messages:", r);
     return r;
   } catch (e: any) {
     console.error(e.message);
+    return [];
+  }
+};
+
+export const getMessagesNew: (
+  userName: string | null,
+  chatId: string | undefined,
+  private_key: string,
+  password: string,
+  encKey: string,
+  messageId: string
+) => Promise<MessageInterface[]> = async function (
+  userName,
+  chatId,
+  private_key,
+  password,
+  encKey,
+  messageId
+) {
+  try {
+    if (
+      userName == null ||
+      chatId == undefined ||
+      private_key == undefined ||
+      password == undefined ||
+      encKey == undefined ||
+      messageId == ""
+    ) {
+      //   console.log(
+      //     `UserName: ${userName}, ChatId: ${chatId}, PrivateKey: ${private_key},encKey:${encKey},messageId:${messageId}`
+      //   );
+      return [];
+    }
+    console.log("Checking for new msgs");
+    var resp = await fetch("/backEndApi/chat/getMessagesNew", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: userName,
+        private_key: private_key,
+        chatId: chatId,
+        messageId: messageId,
+      }),
+    });
+    const r: MessageInterface[] = await resp.json();
+    // console.log("Got encrypted messages:", r, "\nTrying to decrypt");
+    r.forEach((item, index) => {
+      r[index].text = decryptData(encKey, item.text || "");
+    });
+    // console.log("Got messages:", r);
+    return r;
+  } catch (e: any) {
+    console.error("Get new message failed due to:" + e);
     return [];
   }
 };

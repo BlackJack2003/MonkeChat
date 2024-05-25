@@ -65,6 +65,52 @@ interface MessageInterface {
   mine?: boolean;
   text?: string;
   time?: string | number;
+  MessageId?: string;
+}
+
+export async function getMessagesNew(
+  userId: string,
+  ChatID: string,
+  messageId: string
+): Promise<MessageInterface[]> {
+  try {
+    var chat = await Chat.findById(ChatID);
+    if (chat == null) {
+      console.log(
+        "No chat found with id:" +
+          ChatID +
+          " when getting messages for userId: " +
+          userId
+      );
+      return [];
+    }
+    var ra: MessageInterface[] = [];
+    var ind = -1;
+    for (let i = chat.messages.length - 1; i >= 0; i--) {
+      //   console.log(
+      //     `Have:${messageId} comp:${chat.messages[i].toString()}\nEquals:${
+      //       chat.messages[i].toString() == messageId
+      //     }`
+      //   );
+      if (chat.messages[i].toString() == messageId) {
+        ind = i;
+        break;
+      }
+    }
+    for (let i = ind + 1; i < chat.messages.length; i++) {
+      const message = await Message.findById(chat.messages[i]);
+      ra.push({
+        mine: message.sender.toString() == userId,
+        text: message.text,
+        time: Date.parse(message.createdAt),
+        MessageId: message._id.toString(),
+      });
+    }
+    return ra;
+  } catch (e: any) {
+    console.error("Failed to send new msgs due to:" + e.message);
+    return [];
+  }
 }
 
 export async function getMessagesAll(
@@ -89,6 +135,7 @@ export async function getMessagesAll(
         mine: message.sender.toString() == userId,
         text: message.text,
         time: Date.parse(message.createdAt),
+        MessageId: message._id.toString(),
       });
     }
     return ra;
