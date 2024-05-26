@@ -3,7 +3,7 @@
 Ensure that u have the following installed:
 
 1. Docker is installed and docker deamon is running
-2. openssl is installed and path to binary is persent in PATH
+2. openssl is installed and path to binary is present in PATH
 
 First, run the setup file:
 
