@@ -1,7 +1,6 @@
 FROM node:latest
 # Set the working directory
 WORKDIR /app
-RUN npm run build
 # Copy the built files from the previous stage
 # COPY --from=build /app .
 
