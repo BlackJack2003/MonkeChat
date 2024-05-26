@@ -1,11 +1,24 @@
 import mongoose from "mongoose";
 
 // Define schema for messages
-const messageSchema = new mongoose.Schema(
+
+interface MessageSchema {
+  img: string;
+  text: string;
+  sender: mongoose.Types.ObjectId;
+}
+
+export interface MessageInt extends MessageSchema, mongoose.Document {}
+
+const messageSchema = new mongoose.Schema<MessageInt>(
   {
     img: String,
     text: { type: String, required: true },
-    sender: { type: mongoose.Types.ObjectId, ref: "User", required: true }, // Assuming sender is a reference to User model
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    }, // Assuming sender is a reference to User model
   },
   { timestamps: true }
 );
@@ -15,16 +28,33 @@ export const Message =
   mongoose.models.message || mongoose.model("message", messageSchema);
 
 // Define schema for chat
-const chatSchema = new mongoose.Schema(
+
+interface ChatSchema {
+  people: mongoose.Types.Array<{
+    pid: mongoose.Types.ObjectId;
+    encKey: string;
+  }>;
+  messages: mongoose.Types.Array<mongoose.Types.ObjectId>;
+  name: string;
+  image: string;
+}
+
+export interface ChatInt extends ChatSchema, mongoose.Document {}
+
+const chatSchema = new mongoose.Schema<ChatInt>(
   {
     people: [
       {
-        pid: { type: mongoose.Types.ObjectId, ref: "user", required: true },
+        pid: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "user",
+          required: true,
+        },
         encKey: { type: String, required: true },
       },
     ], // Assuming person1 and person2 are references to User model
 
-    messages: [{ type: mongoose.Types.ObjectId, ref: "message" }], // Array of references to Message model
+    messages: [{ type: mongoose.Schema.Types.ObjectId, ref: "message" }], // Array of references to Message model
     name: String,
     image: String,
   },

@@ -1,5 +1,6 @@
 import User from "../schemas/User";
-import Chat, { Message } from "../schemas/Chat";
+import Chat, { ChatInt, Message } from "../schemas/Chat";
+import { binarySearchMember } from "./general";
 
 export interface ChatMenuItemInterface {
   Name: string;
@@ -22,12 +23,8 @@ export async function getChats(
       const userB = await User.findById(user.contacts[i].cid);
       if (userB == null) continue;
       const chat = await Chat.findById(user.contacts[i].chat);
-      var userChatPrivateKey = "";
-      chat.people.forEach((item: any, index: number) => {
-        if (item.pid.toString() == userId) {
-          userChatPrivateKey = item.encKey;
-        }
-      });
+      let index = binarySearchMember(chat.people, userId);
+      var userChatPrivateKey = index != -1 ? chat.people[index].encKey : "";
       if (userChatPrivateKey == "") {
         console.log("User:" + userB.name + " not found in chat");
         return [];
@@ -42,13 +39,12 @@ export async function getChats(
     }
     for (let i = 0; i < user.groupChats.length; i++) {
       const chatB = await Chat.findById(user.contacts[i].chat);
-      const userChatPrivateKey = chatB.people.find(
-        (p: any) => String(p.pid) === userId
-      )?.encKey;
+      let index = binarySearchMember(chatB.people, userId);
+      var userChatPrivateKey = index != -1 ? chatB.people[index].encKey : "";
       rl.push({
         Name: chatB.name,
         Img: chatB.image,
-        ChatId: chatB._id,
+        ChatId: chatB._id.toString(),
         lastMsg: chatB.updatedAt,
         encKey: userChatPrivateKey,
         updateAt: chatB.updatedAt,
@@ -74,7 +70,7 @@ export async function getMessagesNew(
   messageId: string
 ): Promise<MessageInterface[]> {
   try {
-    var chat = await Chat.findById(ChatID);
+    var chat: ChatInt | null = await Chat.findById(ChatID);
     if (chat == null) {
       console.log(
         "No chat found with id:" +
@@ -87,11 +83,6 @@ export async function getMessagesNew(
     var ra: MessageInterface[] = [];
     var ind = -1;
     for (let i = chat.messages.length - 1; i >= 0; i--) {
-      //   console.log(
-      //     `Have:${messageId} comp:${chat.messages[i].toString()}\nEquals:${
-      //       chat.messages[i].toString() == messageId
-      //     }`
-      //   );
       if (chat.messages[i].toString() == messageId) {
         ind = i;
         break;

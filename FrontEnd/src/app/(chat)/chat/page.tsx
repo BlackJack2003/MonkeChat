@@ -239,6 +239,7 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
       ChatId,
       realEncKey
     );
+
     myMessages.current = myMessages.current.concat(
       await getMessagesNew(
         session.username,
@@ -246,7 +247,9 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
         session.private_key,
         session.password,
         realEncKey,
-        myMessages.current[myMessages.current.length - 1].MessageId || ""
+        myMessages.current.length > 0
+          ? myMessages.current[myMessages.current.length - 1].MessageId || ""
+          : ""
       )
     );
     if (textEle?.value) textEle.value = "";
@@ -278,7 +281,9 @@ const ChatPanel: React.FC<ChatPanelInterface> = ({
         session.private_key,
         session.password,
         realEncKey,
-        myMessages.current[myMessages.current.length - 1].MessageId || ""
+        myMessages.current.length > 0
+          ? myMessages.current[myMessages.current.length - 1].MessageId || ""
+          : ""
       );
       if (newmsgs.length > 0) {
         // console.log("Got new msgs:", newmsgs);

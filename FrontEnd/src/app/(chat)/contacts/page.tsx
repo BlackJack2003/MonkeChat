@@ -105,7 +105,11 @@ const ContactMenuItem: React.FC<ContactInterface> = ({
           : "")
       }
       onClick={(e) => {
-        setPanel(getPanel(userName || ""));
+        // setPanel(getPanel(userName || ""));
+        setPanel({
+          userName: userName,
+          img: img,
+        });
       }}
     >
       <Image
@@ -181,12 +185,19 @@ const ContactSidePanel: React.FC = () => {
 const ContactPanel: React.FC = () => {
   var { panel, setPanel } = GetContactContext();
   if (panel.userName == undefined) return <></>;
+  let imgSize: number = 400;
   return (
     <div className="flex-grow m-8">
       <div className="flex flex-col justify-center bg-slate-100 shadow-sm dark:bg-gray-700 w-full h-full  rounded-lg">
         <img
-          src={panel.img || "/def_user.jpg"}
+          src={panel.img}
           alt={panel.userName + "'s image"}
+          style={{
+            maxHeight: imgSize,
+            maxWidth: imgSize,
+            minHeight: imgSize,
+            minWidth: imgSize,
+          }}
           className="rounded-full mx-auto"
         />
         <div className="text-center mt-5 text-3xl">{panel.userName}</div>

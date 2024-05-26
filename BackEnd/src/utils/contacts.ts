@@ -6,30 +6,11 @@ import {
   encryptWithPublicKey,
   generateRandomKey,
 } from "./login";
-
-function binarySearch(arr: any[], target: any): number {
-  let left = 0;
-  let right = arr.length - 1;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-
-    if (arr[mid].cid === target) {
-      return mid; // Found the target
-    } else if (arr[mid].cid < target) {
-      left = mid + 1; // Search in the right half
-    } else {
-      right = mid - 1; // Search in the left half
-    }
-  }
-
-  return -1; // Target not found
-}
+import { binarySearchContacts, insertContact, insertMember } from "./general";
 
 //Add b to a's contact list and add matching chat
 export async function addContact(a: string, b: string): Promise<boolean> {
   var chatA = null;
-  //   var chatB = null;
   try {
     const randKey = generateRandomKey();
     var userA = await User.findOne({ name: a });
@@ -46,9 +27,9 @@ export async function addContact(a: string, b: string): Promise<boolean> {
       return false;
     }
     // Check if 'b' already exists in 'A's contacts
-    let i = userA.contacts.find((item: any) => item.cid == userB._id);
-    //  binarySearch(userA.contacts, userB._id);
-    var existingContact = i != undefined ? userA.contacts[i] : null;
+    // let i = userA.contacts.find((item: any) => item.cid == userB._id);
+    let i = binarySearchContacts(userA.contacts, userB._id);
+    var existingContact = i != -1 ? userA.contacts[i] : null;
     if (existingContact) {
       console.log(`User: ${b} already exists in contacts of ${a}`);
       return true;
@@ -56,14 +37,22 @@ export async function addContact(a: string, b: string): Promise<boolean> {
 
     // Create a new chat
     chatA = new Chat();
-    chatA.people.push({
+    chatA.people = insertMember(chatA.people, {
       pid: userA._id,
       encKey: encryptWithPublicKey(userA.public_key, randKey),
     });
-    chatA.people.push({
+    // chatA.people.push({
+    //   pid: userA._id,
+    //   encKey: encryptWithPublicKey(userA.public_key, randKey),
+    // });
+    chatA.people = insertMember(chatA.people, {
       pid: userB._id,
       encKey: encryptWithPublicKey(userB.public_key, randKey),
     });
+    // chatA.people.push({
+    //   pid: userB._id,
+    //   encKey: encryptWithPublicKey(userB.public_key, randKey),
+    // });
     await chatA.save();
 
     // Create a new contact object for 'a's contacts
@@ -71,14 +60,16 @@ export async function addContact(a: string, b: string): Promise<boolean> {
       cid: userB._id,
       chat: chatA._id,
     };
-    userA.contacts.push(newContactA);
+    // userA.contacts.push(newContactA);
+    userA.contacts = insertContact(userA.contacts, newContactA);
     const newContactB = {
       cid: userA._id,
       chat: chatA._id,
     };
     // Insert the new contact into 'b's contacts array maintaining lexicographic order
-    userB.contacts.push(newContactB);
+    // userB.contacts.push(newContactB);
     // Save the updated 'a' user document
+    userB.contacts = insertContact(userB.contacts, newContactB);
     await userA.save();
     await userB.save();
     return true;

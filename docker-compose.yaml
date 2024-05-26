@@ -6,6 +6,8 @@ services:
     container_name: monke-db
     volumes:
       - ./db:/data/db:rw
+    ports:
+      - "27017:27017"
     networks:
       - monkedbnet
 
