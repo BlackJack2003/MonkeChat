@@ -119,13 +119,15 @@ echo ssl_certs directory check complete
 rem Generate SSL certificates and DH parameters
 echo Generating self-signed certificate
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "%currentDir%ssl_certs\private_nginx-selfsigned.key" -out "%currentDir%ssl_certs\public_nginx-selfsigned.crt" -subj "/C=IN/ST=Karnataka/L=Bangalore/O=BMS/CN=127.0.0.1"
-if %errorlevel% neq 0 call echo "Error generating self-signed certificate."&& pause
+if %errorlevel% neq 0 call :handleError "Error generating self-signed certificate."
 echo Self-signed certificate generated
 
 echo Generating DH parameters
 openssl dhparam -out "%currentDir%ssl_certs\dhparam.pem" 2048
-if %errorlevel% neq 0 call echo "Error generating DH parameters."&& pause
+if %errorlevel% neq 0 call :handleError "Error generating DH parameters."
 echo DH parameters generated
+
+echo SSL keys and DH parameters creation complete
 
 rem Run docker-compose up
 echo Running docker-compose down
