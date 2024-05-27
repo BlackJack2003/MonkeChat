@@ -62,7 +62,7 @@ const MessageBox: React.FC<MessageInterface> = ({
   return (
     <div
       className="relative flex h-max"
-      style={{ alignSelf: mine ? "flex-end" : "flex-start" }}
+      style={{ alignSelf: mine ? "flex-start" : "flex-end", direction: "ltr" }}
     >
       {mine == false && <SideArrow mine={mine} />}
 
@@ -213,8 +213,11 @@ const MessageArea: React.FC<{
 }> = ({ children = <></>, msgList = [] }) => {
   // var ting =
   return (
-    <div className="chatPanelMsgAreaLight dark:chatPanelMsgAreaDark flex  w-full flex-grow flex-col z-10 relative overflow-y-auto">
-      <div className="h-full overflow-x-hidden w-full space-y-2 flex flex-col overflow-y-scroll">
+    <div className="chatPanelMsgAreaLight dark:chatPanelMsgAreaDark flex w-full flex-grow flex-col z-10 relative overflow-y-auto">
+      <div
+        className="h-full overflow-x-hidden w-full space-y-2 flex flex-col overflow-y-scroll"
+        style={{ direction: "rtl" }}
+      >
         {children}
         {msgList.map((item, index) => {
           return <MessageBox key={index} {...item} />;
