@@ -79,6 +79,7 @@ export const ProfImg: React.FC<ProfImgInt> = ({ imgSrc }) => {
 
 const SignInOrLogo: React.FC = () => {
   const data = useAppSelector((s) => s.session);
+  const [update, setupdate] = useState(false);
   var image = useRef("");
   var email = useRef("");
   var name = useRef("");
@@ -86,6 +87,7 @@ const SignInOrLogo: React.FC = () => {
     image.current = data.image;
     email.current = data.email;
     name.current = data.username;
+    setupdate((pu) => !pu);
     return () => {};
   }, [data]);
 
