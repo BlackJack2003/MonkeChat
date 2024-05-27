@@ -138,25 +138,39 @@ const ContactSidePanel: React.FC = () => {
   const searchVal = useRef<string>("");
   const [update, setupdate] = useState(false);
   const session = useAppSelector((s) => s.session);
-  const contactsList = useRef<ContactInterface[]>([]);
+  const list = useRef<ContactInterface[]>([]);
+  const [contactList, setcontactList] = useState<ContactInterface[]>([]);
   useEffect(() => {
     const _ = async () => {
       if (session.password != "") {
-        contactsList.current = await getContacts(
-          session.username,
-          session.private_key
-        );
-        contactsList.current.sort(function (a, b) {
+        list.current = await getContacts(session.username, session.private_key);
+        list.current.sort(function (a, b) {
           var x = a.userName || "";
           var y = b.userName || "";
           return x < y ? -1 : x > y ? 1 : 0;
         });
+        setcontactList(list.current);
         setupdate((prevupdate) => !prevupdate);
       }
     };
     _();
     return () => {};
   }, [session]);
+  function handleSearch() {
+    if (searchVal.current === "") {
+      setcontactList(list.current);
+    } else {
+      const filterBySearch = list.current.filter((item) => {
+        if (
+          item.userName?.toLowerCase().includes(searchVal.current.toLowerCase())
+        ) {
+          return item;
+        }
+      });
+      setcontactList(filterBySearch);
+    }
+    setupdate((prevupdate) => !prevupdate);
+  }
   return (
     <div
       className="flex flex-col h-screen w-[25vw] bg-slate-100 p-4 [&>*]:mx-auto [&>*]:w-full overflow-x-hidden dark:bg-gray-800 dark:text-white border-r-2 dark:border-slate-900 resize-x"
@@ -171,10 +185,11 @@ const ContactSidePanel: React.FC = () => {
         className="mt-4 p-2 px-4 rounded-md hover:ring-2 active:ring-4 ring-teal-300 dark:bg-gray-700 border-b-teal-700 border-b-2"
         onChange={(e) => {
           searchVal.current = e.target.value;
+          handleSearch();
         }}
       />
 
-      {contactsList.current.map((item, index) => {
+      {contactList.map((item, index) => {
         return <ContactMenuItem key={index} {...item} />;
       })}
       <PanelAddContactSection />
