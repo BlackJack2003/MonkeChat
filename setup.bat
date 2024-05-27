@@ -2,11 +2,6 @@
 rem Get the directory of the batch file
 set "currentDir=%~dp0"
 
-rem Function to handle errors
-echo
-echo An error occurred: %1
-pause
-
 rem Starting script
 echo Starting script
 
