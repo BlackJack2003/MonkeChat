@@ -50,3 +50,4 @@ FrontEnd/.env.development
 
 BackEnd/.env.development
 BackEnd/.env.production
+BackEnd/.env.local
