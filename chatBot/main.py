@@ -1,10 +1,17 @@
-import torch
+from pathlib import Path
+import torch, os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# Load pre-trained DialoGPT medium model and tokenizer from Hugging Face
-model_name = 'microsoft/DialoGPT-small'
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
+# Define the common prefix path
+common_prefix = './chatBot/monkeChat'
+
+# Construct the full paths for the tokenizer and model
+tokenizer_path = os.path.join(common_prefix, 'monke_tokenizer')
+model_path = os.path.join(common_prefix, 'monke_model')
+
+# Load the tokenizer and model from the specified paths
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+model = AutoModelForCausalLM.from_pretrained(model_path)
 
 # If you have a GPU, move the model to GPU and set it to FP16
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -48,7 +55,7 @@ My job/task is to help the user with their monke chat related questions.
 The user can type 'exit' to end the conversation.'''
 history = tokenizer.encode(initial_message + tokenizer.eos_token, return_tensors='pt').to(device)
 
-print("Hello! I am a DialoGPT-medium chatbot. How can I help you today? Type 'exit' to end the conversation.")
+print("Hello! I am a DialoGPT-based chatbot. How can I help you today? Type 'exit' to end the conversation.")
 while True:
     user_input = input("You: ")
     if user_input.lower() == 'exit':
