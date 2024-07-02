@@ -53,3 +53,5 @@ BackEnd/.env.production
 BackEnd/.env.local
 
 chatBot/monkeChat/*
+
+monkeNative/node_modules/*
